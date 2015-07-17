@@ -26,7 +26,7 @@ library
                     , text
   ghc-options:
     --ddump-splices
-    -- -funbox-strict-fields
+    --funbox-strict-fields
   hs-source-dirs:     src
   default-language:   Haskell2010
   default-extensions: QuasiQuotes
@@ -47,4 +47,4 @@ test-suite spec
   default-language:   Haskell2010
   default-extensions: QuasiQuotes
   ghc-options:
-    -ddump-splices
+    -- -ddump-splices
