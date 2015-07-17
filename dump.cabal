@@ -22,6 +22,10 @@ library
   build-depends:      base >=4.8 && <4.9
                     , template-haskell
                     , haskell-src-meta
+                    , interpolatedstring-perl6
+  ghc-options:
+    -- -funbox-strict-fields
+    -- -ddump-splices
   hs-source-dirs:     src
   default-language:   Haskell2010
 
@@ -32,3 +36,4 @@ test-suite spec
                     , hspec
   hs-source-dirs:     spec
   main-is:            Spec.hs
+  default-language:   Haskell2010
