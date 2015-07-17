@@ -9,4 +9,4 @@ dump = QuasiQuoter {quoteExp = process}
 d = dump
 
 process :: String -> Q Exp
-process = undefined
+process _ = return $ LitE $ StringL ""
