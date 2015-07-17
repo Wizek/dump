@@ -1,8 +1,15 @@
 {-# OPTIONS_GHC -fno-warn-missing-fields #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Debug.Dump where
 
+-- import Data.String.Trim (trim)
+import Data.Char (isSpace)
+import Data.List (foldl')
+
+import Data.List
+import Debug.Trace
 import Language.Haskell.TH
 import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
@@ -17,13 +24,36 @@ dump = QuasiQuoter {quoteExp = process}
 d = dump
 
 process :: String -> Q Exp
-process str = return $ pairOf str
--- process str = return $ LitE $ StringL ""
+process str = pairsOf str $> parse $> return
   where
+    pairsOf :: String -> String
+    pairsOf str = join (map pairOf list) $> wrapInParens
+      where
+        join :: [String] -> String
+        join = intercalate ([q| ++ ", " ++ |] :: String)
+        list :: [String]
+        list = separate str
+    pairOf :: String -> String
+    pairOf str = [qq|"($stripped) = " ++ show ($str)|]
+      where
+        stripped :: String
+        stripped = trim str
     parse :: String -> Exp
     parse = parseExp .> either error id
-    pairOf :: String -> Exp
-    pairOf str = parse $ [qc|"({str}) = " ++ (show ({str}))|]
+
+-- Source: http://stackoverflow.com/a/23040836/499478
+trim :: String -> String
+trim s = let
+  s'    = dropWhile isSpace s
+  trim' = foldl'
+            (\(c,w) x -> if isSpace x then (c,w+1)
+                         else (c+w+1,0)) (0,0) s'
+  in
+   take (fst trim') s'
+
+
+wrapInParens :: String -> String
+wrapInParens s = [qq|($s)|]
 
 separate :: String -> [String]
 separate = wordsWhen (== ',')
