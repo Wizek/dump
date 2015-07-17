@@ -1,12 +1,13 @@
 Example usage:
 
-    {-# LANGUAGE QuasiQuotes #-}
+```haskell
+{-# LANGUAGE QuasiQuotes #-}
 
-    import Debug.Dump
+import Debug.Dump
 
-    main = print [d|a, a+1, map (+a) [1..3]|]
-      where a = 2
-
+main = print [d|a, a+1, map (+a) [1..3]|]
+  where a = 2
+```
 
 
 
