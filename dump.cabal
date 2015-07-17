@@ -4,7 +4,7 @@
 name:               dump
 version:            0.1.2
 synopsis:           Dumps the names and values of expressions to ease debugging.
-description:        Example: `let a=1 in [d|a, a+1|] == "(a) = 1, (a+1) = 2"`
+description:        Example: "let a=1 in [d|a, a+1|] == \"(a) = 1, (a+1) = 2\""
 license:            MIT
 license-file:       LICENSE
 author:             Milán Nagy
@@ -12,7 +12,7 @@ maintainer:         dumplibhs.psssst@dfgh.net
 copyright:          ©2015 Milán Nagy
 category:           Development
 build-type:         Simple
-extra-source-files: README
+extra-source-files: README.md
 cabal-version:      >=1.10
 homepage:           https://github.com/Wizek/dump
 
