@@ -1,6 +1,9 @@
+{-# LANGUAGE QuasiQuotes #-}
+
+import Debug.Dump
 import Test.Hspec
 
 main = hspec $ do
-  describe "" $ do
-    it "" $ do
-      1 `shouldBe` 2
+  describe "Debug.Dump" $ do
+    it "should execute even if empty" $ do
+      [d||] `shouldBe` ""
