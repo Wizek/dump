@@ -24,6 +24,7 @@ library
                     , haskell-src-meta
                     , interpolatedstring-perl6
                     , text
+                    , parsec
   ghc-options:
     --ddump-splices
     -- -funbox-strict-fields
@@ -40,6 +41,7 @@ test-suite spec
                     , template-haskell
                     , haskell-src-meta
                     , interpolatedstring-perl6
+                    , parsec
                     , text
 
   hs-source-dirs:     spec, src
@@ -48,3 +50,20 @@ test-suite spec
   default-extensions: QuasiQuotes
   ghc-options:
     -ddump-splices
+
+executable main
+  build-depends:      base
+                    , hspec
+
+                    , template-haskell
+                    , haskell-src-meta
+                    , interpolatedstring-perl6
+                    , parsec
+                    , text
+
+  hs-source-dirs:     spec, src
+  main-is:            Spec.hs
+  default-language:   Haskell2010
+  default-extensions: QuasiQuotes
+  ghc-options:
+    -- -ddump-splices

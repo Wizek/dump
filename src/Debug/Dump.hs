@@ -10,9 +10,6 @@ import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
 
-(.>) = flip (.); infixl 9 .>
-($>) = flip ($); infixl 0 $>
-
 dump :: QuasiQuoter
 dump = QuasiQuoter {quoteExp = process}
 
@@ -35,3 +32,5 @@ process str = pairsOf str $> parse $> return
         stripped = strip str
     parse :: String -> Exp
     parse = parseExp .> either error id
+
+
