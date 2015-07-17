@@ -23,7 +23,7 @@ process str = return $ pairOf str
     parse :: String -> Exp
     parse = parseExp .> either error id
     pairOf :: String -> Exp
-    pairOf str = parse $ [qc|"{str}=" ++ (show ({str}))|]
+    pairOf str = parse $ [qc|"({str}) = " ++ (show ({str}))|]
 
 separate :: String -> [String]
 separate = wordsWhen (== ',')
