@@ -1,7 +1,9 @@
 {-# LANGUAGE QuasiQuotes #-}
 
-import Debug.Dump
 import Test.Hspec
+
+import Debug.Dump
+import Utils
 
 main = hspec $ do
   describe "wrapInParens" $ do
@@ -26,3 +28,4 @@ main = hspec $ do
 
     it "should work with comma separated expressions" $ do
       [d|1, 2|] `shouldBe` "(1) = 1, (2) = 2"
+      [d|(1, 1), 1|] `shouldBe` "((1, 1)) = (1,1), (1) = 1"
