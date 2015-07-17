@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-missing-fields #-}
 
-module Debug.Dump where
+module Debug.Dump (d, dump) where
 
 import Utils
 import Data.List
@@ -9,9 +9,6 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
-
-(.>) = flip (.); infixl 9 .>
-($>) = flip ($); infixl 0 $>
 
 dump :: QuasiQuoter
 dump = QuasiQuoter {quoteExp = process}

@@ -3,6 +3,10 @@ module Utils where
 import qualified Data.Text as T
 import Text.InterpolatedString.Perl6
 
+(.>) = flip (.); infixl 9 .>
+($>) = flip ($); infixl 0 $>
+
+
 strip  = T.unpack . T.strip . T.pack
 
 wrapInParens :: String -> String
