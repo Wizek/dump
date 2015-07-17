@@ -2,7 +2,7 @@
 -- see http://haskell.org/cabal/users-guide/
 
 name:               dump
-version:            0.1.0
+version:            0.1.1
 synopsis:           Dumps the names and values of expressions to ease debugging.
 description:        Example: `let a=1 in [d|a, a+1|] == "(a) = 1, (a+1) = 2"`
 license:            MIT
@@ -24,7 +24,7 @@ library
   exposed-modules:    Debug.Dump
   other-modules:      Utils
   -- other-extensions:
-  build-depends:      base >=4.8 && <4.9
+  build-depends:      base
                     , template-haskell
                     , haskell-src-meta
                     , interpolatedstring-perl6
