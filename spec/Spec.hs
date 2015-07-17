@@ -19,9 +19,10 @@ spec = hspec $ do
 
   describe "separate" $ do
     it "should work" $ do
-      separate "a" `shouldBe` ["a"]
+      -- separate "a" `shouldBe` ["a"]
+      -- separate "a,b" `shouldBe` ["a", "b"]
       -- separate "a, b" `shouldBe` ["a", "b"]
-      -- separate "(a)" `shouldBe` ["(a)"]
+      separate "(a)" `shouldBe` ["(a)"]
       -- separate "(a, b)" `shouldBe` ["(a, b)"]
 
   -- xdescribe "Debug.Dump" $ do

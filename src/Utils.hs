@@ -5,10 +5,7 @@ import Text.InterpolatedString.Perl6
 import Text.Parsec
 import Text.Parsec.String
 import Text.Parsec.Char
-
 import Debug.Trace
-import System.IO.Unsafe
-import Data.IORef
 -- import Text.Parsec.Token
 
 (.>) = flip (.); infixl 9 .>
@@ -26,7 +23,7 @@ separate :: String -> [String]
 separate s = parse expressions "" s $> either (show .> error) (map strip)
 
 expressions :: Parser [String]
-expressions = commaSep expression
+expressions = commaSep expression >>>= eof
   $> ftShow "expressions"
 
 expression :: Parser String
@@ -35,42 +32,22 @@ expression =
   nonComma1
   $> ftShow "expression"
 
-try' = ftShow "try" .> try
-parens' = ftShow "parens" .> parens
+try' = try .> ftShow "try"
+parens' = parens .> ftShow "parens"
+lookAhead' = lookAhead .> ftShow "lookAhead"
 
 parened = parens
-
-depth :: IORef Int
-depth = unsafePerformIO $ newIORef 1
-
--- traceM :: (Monad m) => String -> m ()
--- traceM string = trace string $ return ()
-
--- traceShowM :: (Show a, Monad m) => a -> m ()
--- traceShowM = traceM . show
-
 
 ftShow :: String -> Parser a -> Parser a
 ftShow label functor = do
   s <- getInput
   p <- getPosition
-  let num = unsafePerformIO $ readIORef depth
-  traceM (indent num ++ show num ++ " " ++ label ++ " at:" ++ show p ++ " inp:" ++  show s)
-  let num2 = (unsafePerformIO (asd num))
-  traceShowM num2
+  traceM (label ++ " at:" ++ show p ++ " inp:" ++  show s)
   value <- functor
-  traceM (indent num ++ show num2 ++ " " ++ label ++ " matched")
+  traceM (label ++ " matched")
   return value
-  where
-    indent num = replicate (num * 2) ' '
-    asd num = do
-      modifyIORef depth (+1)
-      d <- readIORef depth
-      print (123, d)
-      return d
 
-
--- pTest = parseTest expressions "(a, b)"
+pTest = parseTest expressions "(a, b)"
 
 nonComma1 :: Parser String
 nonComma1 = fmap append nonComma
@@ -102,3 +79,7 @@ commaSep p = p `sepBy` (char ',')
 --                             where (w, s'') = break p s'
 
 
+a >>>= b = do
+  result <- a
+  b
+  return result
