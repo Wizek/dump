@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-missing-fields #-}
 
-module Debug.Dump where
+module Debug.Dump (d, dump) where
 
 import Utils
 import Data.List

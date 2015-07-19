@@ -25,7 +25,8 @@ spec = hspec $ do
       separate "(a)" `shouldBe` ["(a)"]
       -- separate "(a, b)" `shouldBe` ["(a, b)"]
 
-  -- xdescribe "Debug.Dump" $ do
+  -- describe "Debug.Dump" $ do
+  --   -- TODO decide if this is useful enough to warrant support
   --   -- it "should execute even if empty" $ do
   --   --   [d||] `shouldBe` ""
 
@@ -42,4 +43,11 @@ spec = hspec $ do
 
   --   it "should work with comma separated expressions" $ do
   --     [d|1, 2|] `shouldBe` "(1) = 1, (2) = 2"
-  --     [d|(1, 1), 1|] `shouldBe` "((1, 1)) = (1,1), (1) = 1"
+  --     let i = 0.25
+  --     let f = (1 -)
+  --     [d|i, 1/i, f i, f (1/i)|] `shouldBe`
+  --       "(i) = 0.25, (1/i) = 4.0, (f i) = 0.75, (f (1/i)) = -3.0"
+
+  --   -- TODO parser, WIP on 'parse' branch
+  --   -- it "should step over commas in sub-expressions" $ do
+  --   --   [d|(1, 2), 1|] `shouldBe` "((1, 1)) = (1,1), (1) = 1"
