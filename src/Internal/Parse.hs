@@ -25,7 +25,9 @@ pExp = pUntil 0 ','
 pUntil :: Int -> Char -> String -> String
 pUntil _ _ "" = ""
 pUntil i c (x : xs)
-  | trace [d|c, i, x:xs|] False = undefined
+  -- | trace (show (c, i, x:xs)) False = undefined
+  -- | trace ("c=" ++ show c ++ "i=" ++ show i ++ "x:xs=" ++ show (x:xs)) False = undefined
+  -- | trace [d|c, i, x:xs|] False = undefined
   | x == c    = ""
   | x == '('  = x : matchAndRest ')'
   | x == '['  = x : matchAndRest ']'
@@ -38,4 +40,18 @@ pUntil i c (x : xs)
         where
           match = pUntil (i+1) cc xs
           rest = drop (length match + 1) xs
-      leaf cc = takeWhile (/= cc) xs ++ [cc]
+      -- leaf cc = takeWhile (/= cc) xs ++ [cc]
+      leaf cc = pLeaf cc xs ++ [cc]
+
+pLeaf :: Char -> String -> String
+-- pLeaf cc xs
+--   | trace [d|cc, xs|] False = undefined
+pLeaf _  ""   = ""
+pLeaf cc (x:xs)
+  | x == cc   = ""
+  | x == '\\' = x : case xs of
+    ""       -> ""
+    (y:ys)   -> y : pLeaf cc ys
+  | otherwise = x : pLeaf cc xs
+
+-- if I see a shash, ignore the next character

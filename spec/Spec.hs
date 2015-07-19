@@ -48,12 +48,19 @@ spec = hspec $ do
 
     it "handles list literals" $ do
       pExp "[a,b]" `shouldBe` "[a,b]"
+      -- pExp "[a,b]" `shouldBe` "[a"
 
     it "treats string literals as leaves" $ do
       pExp [q|"(", a|] `shouldBe` [q|"("|]
 
-    -- it "support escaping in leaves" $ do
-    --   pExp [q|"\"", a|] `shouldBe` [q|"\""|]
+    it "support escaping in leaves" $ do
+      pExp [q|"\"", a|] `shouldBe` [q|"\""|]
+
+  describe "parseExp" $ do
+    it "treats string literals as leaves" $ do
+      pLeaf '"' "a\", b" `shouldBe` "a"
+      pLeaf '"' "a\\\"\", b" `shouldBe` "a\\\""
+      pLeaf '"' "a\\" `shouldBe` "a\\"
 
   -- describe "separate" $ do
   --   it "should work" $ do
