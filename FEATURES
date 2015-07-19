@@ -5,8 +5,17 @@ you can use `git diff`. For example: `git diff 0.1.0..0.1.2 -- FEATURES`
 
 # Features
 
+* Use it with Debug.Trace: `trace [d|x, y, z|] x`
+* Use it with Test.QuickCheck: `counterexample [d|x, y, z|]`
+* Use it inside the IO monad: `putStrLn [d|x, y, z|]`
+
 * print out a variable `let a = 1 in print [d|a|]` outputing: `(a) = 1`
 * print out an expression `print [d|1 + 2|]` outputting: `(1 + 2) = 3`
 * refer to variables in the expression `let a = [1..3] in print [d|map (+1) a|]`
   outputing: `(map (+1) a) = [2,3,4]`
 * print out multiple expressions `[d|1+2, 3+4|]` -> "(1+2) = 3, (3+4) = 7"
+
+# Known issues
+
+* Expressions that contain commas inside them fail during compile time.
+  An example: `[d|1, (2, 3)|]`
