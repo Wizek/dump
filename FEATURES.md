@@ -1,7 +1,7 @@
 # Description
 
 To attain a changelog of this library between two arbitrary versions
-you can use `git diff`. For example: `git diff 0.1.0..0.1.2 -- FEATURES`
+you can use `git diff`. For example: `git diff v0.1.0..v0.2.0 -- FEATURES.md`
 
 # Features
 
