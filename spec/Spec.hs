@@ -4,6 +4,7 @@ import Test.Hspec
 
 import Debug.Dump
 import Internal.Parse
+import Text.InterpolatedString.Perl6
 import Utils
 
 -- xdescribe n = describe n $ it "" pending
@@ -25,20 +26,31 @@ spec = hspec $ do
     --   pExp' "" "asd,a,sd" `shouldBe` ("asd","a,sd")
     --   pExp' "" "(a,b)" `shouldBe` ("(a,b)","")
 
-    it "flat" $ do
+    it "handles flat" $ do
       pExp "asd" `shouldBe` "asd"
       pExp "asd,asd" `shouldBe` "asd"
       pExp "asd,a,sd" `shouldBe` "asd"
 
-    it "parens" $ do
+    it "handles parens" $ do
       pExp "(a,b)" `shouldBe` "(a,b)"
       pExp "(a,b) (a,b)" `shouldBe` "(a,b) (a,b)"
       pExp "(a,b), c" `shouldBe` "(a,b)"
       pExp "((a), b), c" `shouldBe` "((a), b)"
       pExp "((a,b),(a,b)), a" `shouldBe` "((a,b),(a,b))"
 
-    it "char literals" $ do
+    it "handles char literals" $ do
       pExp "','" `shouldBe` "','"
+      pExp "',', a" `shouldBe` "','"
+
+    it "handles string literals" $ do
+      pExp [q|","|] `shouldBe` [q|","|]
+      pExp [q|",", a|] `shouldBe` [q|","|]
+
+    it "handles list literals" $ do
+      pExp "[a,b]" `shouldBe` "[a,b]"
+
+    -- it "treats string literals as leaves" $ do
+    --   pExp [q|"(", a|] `shouldBe` [q|"("|]
 
   -- describe "separate" $ do
   --   it "should work" $ do

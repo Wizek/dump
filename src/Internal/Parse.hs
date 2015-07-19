@@ -27,8 +27,13 @@ pUntil _ _ "" = ""
 pUntil i c (x : xs)
   | trace [d|c, i, x:xs|] False = undefined
   | x == c    = ""
-  | x == '('  = x : match ++ ")" ++ pUntil i c rest
+  | x == '('  = x : matchAndRest ')'
+  | x == '\'' = x : matchAndRest '\''
+  | x == '"'  = x : matchAndRest '"'
+  | x == '['  = x : matchAndRest ']'
   | otherwise = x : pUntil i c xs
     where
-      match = pUntil (i+1) ')' xs
-      rest = drop (length match + 1) xs
+      matchAndRest char = match ++ [char] ++ pUntil i c rest
+        where
+          match = pUntil (i+1) char xs
+          rest = drop (length match + 1) xs
