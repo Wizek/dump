@@ -20,12 +20,6 @@ spec = hspec $ do
       wrapInParens "" `shouldBe` "()"
 
   describe "parseExp" $ do
-    -- it "should work" $ do
-    --   pExp' "" "asd" `shouldBe` ("asd","")
-    --   pExp' "" "asd,asd" `shouldBe` ("asd","asd")
-    --   pExp' "" "asd,a,sd" `shouldBe` ("asd","a,sd")
-    --   pExp' "" "(a,b)" `shouldBe` ("(a,b)","")
-
     it "handles flat" $ do
       pExp "asd" `shouldBe` "asd"
       pExp "asd,asd" `shouldBe` "asd"
@@ -48,7 +42,6 @@ spec = hspec $ do
 
     it "handles list literals" $ do
       pExp "[a,b]" `shouldBe` "[a,b]"
-      -- pExp "[a,b]" `shouldBe` "[a"
 
     it "treats string literals as leaves" $ do
       pExp [q|"(", a|] `shouldBe` [q|"("|]
@@ -57,23 +50,30 @@ spec = hspec $ do
       pExp [q|"\"", a|] `shouldBe` [q|"\""|]
       pExp [q|"a" ++ "b", a|] `shouldBe` [q|"a" ++ "b"|]
 
+    it "misc" $ do
+      pExp [q|"((", a|] `shouldBe` [q|"(("|]
+      pExp [q|"()(", a|] `shouldBe` [q|"()("|]
+      pExp "(a, )" `shouldBe` "(a, )"
+      pExp "(, b)" `shouldBe` "(, b)"
+      -- pExp "([)], a" `shouldBe` "([)]"
+
   describe "parseExp" $ do
     it "treats string literals as leaves" $ do
       pLeaf '"' "a\", b" `shouldBe` "a"
       pLeaf '"' "a\\\"\", b" `shouldBe` "a\\\""
       pLeaf '"' "a\\" `shouldBe` "a\\"
 
-  -- describe "separate" $ do
-  --   it "should work" $ do
-  --     -- separate "a" `shouldBe` ["a"]
-  --     -- separate "a,b" `shouldBe` ["a", "b"]
-  --     -- separate "a, b" `shouldBe` ["a", "b"]
-  --     -- separate "(a)" `shouldBe` ["(a)"]
-  --     -- separate "(a, b)" `shouldBe` ["(a, b)"]
-  --     -- separate "(a, b), b" `shouldBe` ["(a, b)", "b"]
-  --     separate "','" `shouldBe` ["','"]
-  --     -- separate "a ',' b" `shouldBe` ["a ',' b"]
-  --     -- separate "(a, b \")\"), b" `shouldBe` ["(a, b)", "b"]
+  describe "separate" $ do
+    it "should work" $ do
+      separate "a" `shouldBe` ["a"]
+      separate "a,b" `shouldBe` ["a", "b"]
+      separate "a, b" `shouldBe` ["a", " b"]
+      separate "(a)" `shouldBe` ["(a)"]
+      separate "(a, b)" `shouldBe` ["(a, b)"]
+      separate "(a, b), b" `shouldBe` ["(a, b)", " b"]
+      separate "','" `shouldBe` ["','"]
+      separate "a ',' b" `shouldBe` ["a ',' b"]
+      separate "(a, b \")\"), b" `shouldBe` ["(a, b \")\")", " b"]
 
   -- describe "Debug.Dump" $ do
   --   -- TODO decide if this is useful enough to warrant support

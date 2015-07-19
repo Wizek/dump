@@ -6,6 +6,7 @@ import Text.Parsec
 import Text.Parsec.String
 import Text.Parsec.Char
 import Debug.Trace
+import Internal.Parse
 -- import Text.Parsec.Token
 
 (.>) = flip (.); infixl 9 .>
@@ -100,7 +101,8 @@ commaSep :: Parser String -> Parser [String]
 commaSep p = p `sepBy` (char ',')
 
 separate :: String -> [String]
-separate = wordsWhen (== ',')
+separate = parseSimple
+-- separate = wordsWhen (== ',')
 
 -- TODO use parsing to account for [d|1,(2,3)|]
 wordsWhen     :: (Char -> Bool) -> String -> [String]
