@@ -42,7 +42,7 @@ ftShow :: String -> Parser a -> Parser a
 ftShow label functor = do
   s <- getInput
   p <- getPosition
-  traceM (label ++ " at:" ++ show p ++ " inp:" ++  show s)
+  traceM (label ++ " " ++ show p ++ " " ++  show s)
   value <- functor
   traceM (label ++ " matched")
   return value
@@ -57,7 +57,9 @@ append :: a -> [a]
 append a = [a]
 
 parens :: Parser String -> Parser String
-parens = between (char '(') (char ')')
+parens = do
+  content <- between (char '(') (char ')')
+  return content
 
 nonCommas :: Parser String
 nonCommas = many nonComma
