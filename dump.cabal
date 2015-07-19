@@ -39,8 +39,7 @@ library
 
 test-suite spec
   type:               exitcode-stdio-1.0
-  build-depends:      dump
-                    , base
+  build-depends:      base
                     , hspec
 
                     , template-haskell

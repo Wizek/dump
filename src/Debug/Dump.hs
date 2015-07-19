@@ -22,7 +22,7 @@ process str = pairsOf str $> parse $> return
     pairsOf str = join (map pairOf list) $> wrapInParens
       where
         join :: [String] -> String
-        join = intercalate ([q| ++ ", " ++ |] :: String)
+        join = intercalate ([q| ++ "\t" ++ |] :: String)
         list :: [String]
         list = separate str
     pairOf :: String -> String

@@ -3,6 +3,7 @@
 import Test.Hspec
 
 import Debug.Dump
+import Internal.Parse
 import Utils
 
 -- xdescribe n = describe n $ it "" pending
@@ -17,13 +18,39 @@ spec = hspec $ do
       wrapInParens "a" `shouldBe` "(a)"
       wrapInParens "" `shouldBe` "()"
 
-  describe "separate" $ do
-    it "should work" $ do
-      -- separate "a" `shouldBe` ["a"]
-      -- separate "a,b" `shouldBe` ["a", "b"]
-      -- separate "a, b" `shouldBe` ["a", "b"]
-      separate "(a)" `shouldBe` ["(a)"]
-      -- separate "(a, b)" `shouldBe` ["(a, b)"]
+  describe "parseExp" $ do
+    -- it "should work" $ do
+    --   pExp' "" "asd" `shouldBe` ("asd","")
+    --   pExp' "" "asd,asd" `shouldBe` ("asd","asd")
+    --   pExp' "" "asd,a,sd" `shouldBe` ("asd","a,sd")
+    --   pExp' "" "(a,b)" `shouldBe` ("(a,b)","")
+
+    it "flat" $ do
+      pExp "asd" `shouldBe` "asd"
+      pExp "asd,asd" `shouldBe` "asd"
+      pExp "asd,a,sd" `shouldBe` "asd"
+
+    it "parens" $ do
+      pExp "(a,b)" `shouldBe` "(a,b)"
+      pExp "(a,b) (a,b)" `shouldBe` "(a,b) (a,b)"
+      pExp "(a,b), c" `shouldBe` "(a,b)"
+      pExp "((a), b), c" `shouldBe` "((a), b)"
+      pExp "((a,b),(a,b)), a" `shouldBe` "((a,b),(a,b))"
+
+    it "char literals" $ do
+      pExp "','" `shouldBe` "','"
+
+  -- describe "separate" $ do
+  --   it "should work" $ do
+  --     -- separate "a" `shouldBe` ["a"]
+  --     -- separate "a,b" `shouldBe` ["a", "b"]
+  --     -- separate "a, b" `shouldBe` ["a", "b"]
+  --     -- separate "(a)" `shouldBe` ["(a)"]
+  --     -- separate "(a, b)" `shouldBe` ["(a, b)"]
+  --     -- separate "(a, b), b" `shouldBe` ["(a, b)", "b"]
+  --     separate "','" `shouldBe` ["','"]
+  --     -- separate "a ',' b" `shouldBe` ["a ',' b"]
+  --     -- separate "(a, b \")\"), b" `shouldBe` ["(a, b)", "b"]
 
   -- describe "Debug.Dump" $ do
   --   -- TODO decide if this is useful enough to warrant support

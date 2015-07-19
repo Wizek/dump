@@ -19,17 +19,36 @@ wrapInParens = wrapIn "(" ")"
 wrapIn :: String -> String -> String -> String
 wrapIn a c b = a ++ b ++ c
 
-separate :: String -> [String]
-separate s = parse expressions "" s $> either (show .> error) (map strip)
+-- separate :: String -> [String]
+-- separate s = parse expressions "" s $> either (show .> error) (map strip)
+
+
 
 expressions :: Parser [String]
-expressions = commaSep expression >>>= eof
+expressions = commaSep (expression ",") >>>= eof
   $> ftShow "expressions"
 
-expression :: Parser String
-expression =
-  (try' $ parens' expression) <|>
-  nonComma1
+-- expression :: Parser String
+
+-- wrappedIn a c b = do
+--   a' <- string a
+--   b' <- manyTill b (try (string c))
+--   return $ a ++ b ++ c
+
+expression e =
+  (try' $ parens' $ expression ")") <|>
+  (try' $ wrappedIn (string "'") (string "'") $ expression "'") <|>
+  do
+    -- traceShowM ("exclude", e)
+    c <- anyToken
+    if [c] == e then
+      return []
+    else do
+      rest <- expression e
+      return $ c : rest
+
+    -- many (noneOf e)
+  -- many anyToken
   $> ftShow "expression"
 
 try' = try .> ftShow "try"
@@ -57,9 +76,19 @@ append :: a -> [a]
 append a = [a]
 
 parens :: Parser String -> Parser String
-parens = do
-  content <- between (char '(') (char ')')
-  return content
+-- parens p = do
+--   content <- between (char '(') (char ')') p
+--   return $ wrapInParens content
+parens = wrappedIn (string "(") (string ")")
+
+-- wrappedIn :: Parser a -> Parser a -> Parser a -> Parser a
+-- wrappedIn a c b = a >>= b >>= c
+wrappedIn a c b = do
+  a' <- a
+  b' <- b
+  c' <- c
+  return $ a' ++ b' ++ c'
+
 
 nonCommas :: Parser String
 nonCommas = many nonComma
@@ -70,15 +99,15 @@ nonComma = noneOf ","
 commaSep :: Parser String -> Parser [String]
 commaSep p = p `sepBy` (char ',')
 
--- separate :: String -> [String]
--- separate = wordsWhen (== ',')
+separate :: String -> [String]
+separate = wordsWhen (== ',')
 
--- -- TODO use parsing to account for [d|1,(2,3)|]
--- wordsWhen     :: (Char -> Bool) -> String -> [String]
--- wordsWhen p s =  case dropWhile p s of
---                       "" -> []
---                       s' -> w : wordsWhen p s''
---                             where (w, s'') = break p s'
+-- TODO use parsing to account for [d|1,(2,3)|]
+wordsWhen     :: (Char -> Bool) -> String -> [String]
+wordsWhen p s =  case dropWhile p s of
+                      "" -> []
+                      s' -> w : wordsWhen p s''
+                            where (w, s'') = break p s'
 
 
 a >>>= b = do
