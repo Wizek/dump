@@ -1,10 +1,5 @@
 module Internal.Parse where
 
--- import Text.InterpolatedString.Perl6
--- import Text.Parsec
--- import Text.Parsec.String
--- import Text.Parsec.Char
--- import Debug.Dump
 import Debug.Trace
 
 parseSimple :: String -> [String]
