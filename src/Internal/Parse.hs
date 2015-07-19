@@ -28,12 +28,14 @@ pUntil i c (x : xs)
   | trace [d|c, i, x:xs|] False = undefined
   | x == c    = ""
   | x == '('  = x : matchAndRest ')'
-  | x == '\'' = x : matchAndRest '\''
-  | x == '"'  = x : matchAndRest '"'
   | x == '['  = x : matchAndRest ']'
+  | x == '\'' = x : leaf '\''
+  | x == '"'  = x : leaf '"'
   | otherwise = x : pUntil i c xs
     where
-      matchAndRest char = match ++ [char] ++ pUntil i c rest
+      matchAndRest (cc @ closingChar)
+        = match ++ [cc] ++ pUntil i c rest
         where
-          match = pUntil (i+1) char xs
+          match = pUntil (i+1) cc xs
           rest = drop (length match + 1) xs
+      leaf cc = takeWhile (/= cc) xs ++ [cc]
