@@ -88,11 +88,11 @@ spec = hspec $ do
       [d|a + 1|] `shouldBe` "(a + 1) = 2"
 
     it "should work with comma separated expressions" $ do
-      [d|1, 2|] `shouldBe` "(1) = 1\t(2) = 2"
+      [d|1, 2|] `shouldBe` "(1) = 1\t  (2) = 2"
       let i = 0.25
       let f = (1 -)
       [d|i, 1/i, f i, f (1/i)|] `shouldBe`
-        "(i) = 0.25\t(1/i) = 4.0\t(f i) = 0.75\t(f (1/i)) = -3.0"
+        "(i) = 0.25\t  (1/i) = 4.0\t  (f i) = 0.75\t  (f (1/i)) = -3.0"
 
     it "should step over commas in sub-expressions" $ do
-      [d|(1, 2), 1|] `shouldBe` "((1, 2)) = (1,2)\t(1) = 1"
+      [d|(1, 2), 1|] `shouldBe` "((1, 2)) = (1,2)\t  (1) = 1"
