@@ -55,6 +55,7 @@ spec = hspec $ do
 
     it "support escaping in leaves" $ do
       pExp [q|"\"", a|] `shouldBe` [q|"\""|]
+      pExp [q|"a" ++ "b", a|] `shouldBe` [q|"a" ++ "b"|]
 
   describe "parseExp" $ do
     it "treats string literals as leaves" $ do

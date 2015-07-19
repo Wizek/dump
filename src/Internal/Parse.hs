@@ -35,13 +35,13 @@ pUntil i c (x : xs)
   | x == '"'  = x : leaf '"'
   | otherwise = x : pUntil i c xs
     where
-      matchAndRest (cc @ closingChar)
-        = match ++ [cc] ++ pUntil i c rest
+      matchAndRest = factory $ pUntil $ i + 1
+      leaf = factory pLeaf
+      factory :: (Char -> String -> String) -> Char -> String
+      factory f cc = match ++ [cc] ++ pUntil i c rest
         where
-          match = pUntil (i+1) cc xs
+          match = f cc xs
           rest = drop (length match + 1) xs
-      -- leaf cc = takeWhile (/= cc) xs ++ [cc]
-      leaf cc = pLeaf cc xs ++ [cc]
 
 pLeaf :: Char -> String -> String
 -- pLeaf cc xs
