@@ -15,7 +15,16 @@ you can use `git diff`. For example: `git diff 0.1.0..0.1.2 -- FEATURES`
   outputing: `(map (+1) a) = [2,3,4]`
 * print out multiple expressions `[d|1+2, 3+4|]` -> "(1+2) = 3, (3+4) = 7"
 
+# Experimental features
+
+* Support for expressions that contain commas inside them:
+  An example: `[d|1, [2, 3]|]` -> "(1) = 1 ([2, 3]) = [2,3]"
+
+  If your expression is invalid Haskell, such as `[d| ([)] |]` the generated
+  code will be invalid as well, but could be slightly transformed. If you get
+  cryptic error messages because of this, please let us know by opening
+  an issue on GitHub.
+
 # Known issues
 
-* Expressions that contain commas inside them fail during compile time.
-  An example: `[d|1, (2, 3)|]`
+n/a
