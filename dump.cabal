@@ -9,7 +9,6 @@ license:            MIT
 license-file:       LICENSE
 author:             Milán Nagy
 maintainer:         dumplibhs.psssst@dfgh.net
-copyright:          ©2015 Milán Nagy
 category:           Development
 build-type:         Simple
 extra-source-files: README.md
