@@ -52,7 +52,7 @@ oldver=`cat dump.cabal | grep "^version:" | sed -re "s/$rx/\2/"`
 
 if [ "$ver" != "$oldver" ]; then
   msg="Bumping version v$oldver -> v$ver"
-  sed -rie "s/$rx/\1$ver/" dump.cabal
+  sed -r -i -e "s/$rx/\1$ver/" dump.cabal
   git add -u
   git commit -m "$msg"
   log "$msg"
