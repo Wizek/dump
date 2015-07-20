@@ -2,7 +2,7 @@
 -- see http://haskell.org/cabal/users-guide/
 
 name:               dump
-version:            0.2.5
+version:            0.2.6
 
 synopsis:           Dumps the names and values of expressions to ease debugging.
 
