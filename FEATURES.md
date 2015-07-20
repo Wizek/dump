@@ -1,7 +1,12 @@
 # Description
 
 To attain a changelog of this library between two arbitrary versions
-you can use `git diff`. For example: `git diff v0.1.0..v0.2.0 -- FEATURES.md`
+you ask git for a diff on this file. For example:
+
+    git diff v0.2.0..v0.2.6 -- FEATURES.md
+
+Alternatively, you may obtain a diff between two versions via any online
+diffing service, [such as this one](http://www.diffnow.com/?url1=https://raw.githubusercontent.com/Wizek/dump/v0.2.0/FEATURES.md&url2=https://raw.githubusercontent.com/Wizek/dump/v0.2.6/FEATURES.md).
 
 # Features
 
