@@ -3,15 +3,21 @@
 
 name:               dump
 version:            0.2.2
+
 synopsis:           Dumps the names and values of expressions to ease debugging.
-description:        Example: "let a=1 in [d|a, a+1|] == \"(a) = 1, (a+1) = 2\""
+
+description:        Can be used with "Debug.Trace", "Test.QuickCheck", or just
+                    plain old "System.IO"'s "putStrLn".
+
+                    See README.md and FEATURES.md for further details.
+
 license:            MIT
 license-file:       LICENSE
 author:             Milán Nagy
 maintainer:         dumplibhs.psssst@dfgh.net
 category:           Development
 build-type:         Simple
-extra-source-files: README.md
+extra-source-files: README.md, FEATURES.md
 cabal-version:      >=1.10
 homepage:           https://github.com/Wizek/dump
 
