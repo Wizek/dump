@@ -14,10 +14,18 @@ you can use `git diff`. For example: `git diff v0.1.0..v0.2.0 -- FEATURES.md`
 * refer to variables in the expression `let a = [1..3] in print [d|map (+1) a|]`
   outputing: `(map (+1) a) = [2,3,4]`
 * print out multiple expressions `[d|1+2, 3+4|]` -> "(1+2) = 3   (3+4) = 7"
-* tries a bit to line up expressions in colums:
-  `main = let f a = putStrLn [d|a, a+2|] in f 22 >> f 33` ->
-  (a) = 22          (a+2) = 24
-  (a) = 333         (a+2) = 335
+* tries a bit to line up expressions in columns.
+
+  ```haskell
+  main = do
+    f 22
+    f 333
+    where f a = putStrLn [d|a, a+2|]
+  ```
+  Outputs:
+
+        (a) = 22          (a+2) = 24
+        (a) = 333         (a+2) = 335
 
 # Beta features
 
