@@ -45,3 +45,8 @@ diffing service, [such as this one](http://www.diffnow.com/?url1=https://raw.git
 # Known issues
 
 n/a
+
+# Miscellaneous
+
+* Some Haddock documentation, probably more to come
+* Description in FEATURES.md
