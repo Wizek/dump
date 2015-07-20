@@ -14,4 +14,4 @@ which prints:
 
 Have alook at the [list of features!](FEATURES.md).
 
-*Concieved at http://stackoverflow.com/q/31349556/499478*
+*Concieved at [this StackOverflow question](http://stackoverflow.com/q/31349556/499478).*

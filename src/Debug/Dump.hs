@@ -1,6 +1,17 @@
 {-# OPTIONS_GHC -fno-warn-missing-fields #-}
 
-module Debug.Dump (d, dump) where
+{-|
+
+`d`, `dd`, and `dump` are aliases of the same `QuasiQuoter`. you can choose to
+imort just one of them:
+
+@
+import Debug.Dump (dd)
+@
+
+-}
+
+module Debug.Dump (d, dd, dump) where
 
 import Utils
 import Data.List
@@ -10,10 +21,16 @@ import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
 
+
+-- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
 dump = QuasiQuoter {quoteExp = process}
 
+-- | Shorthand for `dump`.
 d = dump
+
+-- | Shorthand for `dump`.
+dd = dump
 
 process :: String -> Q Exp
 process str = pairsOf str $> parse $> return
