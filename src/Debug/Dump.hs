@@ -9,6 +9,38 @@ imort just one of them:
 import Debug.Dump (dd)
 @
 
+Example usage:
+
+@
+{&#45;\# LANGUAGE QuasiQuotes \#&#45;}
+
+import Debug.Dump
+
+main = print [d|a, a+1, map (+a) [1..3]|]
+  where a = 2
+@
+
+which prints:
+
+@
+(a) = 2   (a+1) = 3       (map (+a) [1..3]) = [3,4,5]
+@
+
+by turnint this String
+
+@
+"a, a+1, map (+a) [1..3]"
+@
+
+into this expression
+
+@
+( "(a) = " ++ show (a)            ++ "\t  " ++
+  "(a+1) = " ++ show (a + 1)      ++ "\t  " ++
+  "(map (+a) [1..3]) = " ++ show (map (+ a) [1 .. 3])
+)
+@
+
 -}
 
 module Debug.Dump (d, dd, dump) where
