@@ -69,6 +69,10 @@ dd = dump
 newtype HsExp a = HsExp a deriving (Functor)
 unHsExp (HsExp s) = s
 
+instance Applicative HsExp where
+  pure = HsExp
+  (HsExp f) <*> (HsExp a) = HsExp $ f a
+
 process :: String -> Q Exp
 process = id
   .> splitOnCommas
@@ -85,7 +89,7 @@ nameAndValue :: HsExp String -> HsExp String
 nameAndValue = fmap $ \str-> [qq|"({U.strip str}) = " ++ show ($str)|]
 
 joinAsColumns :: [HsExp String] -> HsExp String
-joinAsColumns = map unHsExp .> intercalate [q| ++ "\t  " ++ |] .> HsExp
+joinAsColumns = sequenceA .> fmap (intercalate [q| ++ "\t  " ++ |])
 
 wrapInParens :: HsExp String -> HsExp String
 wrapInParens = fmap U.wrapInParens
