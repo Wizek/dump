@@ -45,6 +45,7 @@ test-suite spec
   type:               exitcode-stdio-1.0
   build-depends:      base
                     , hspec
+                    , QuickCheck
 
                     , template-haskell
                     , haskell-src-meta
