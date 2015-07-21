@@ -15,7 +15,7 @@ license:            MIT
 license-file:       LICENSE
 author:             Milán Nagy
 maintainer:         dumplibhs.psssst@dfgh.net
-category:           Development
+category:           Development, QuasiQuotes
 build-type:         Simple
 extra-source-files: README.md, FEATURES.md, CHANGES.md
 cabal-version:      >=1.10

@@ -3,13 +3,17 @@
 import Test.Hspec
 
 import Debug.Dump
+import Test.QuickCheck
 import Internal.Parse
 import Text.InterpolatedString.Perl6
 import Utils
+import Data.List (isPrefixOf)
 
 main = spec
 
 spec = hspec $ do
+
+
   describe "wrapInParens" $ do
     it "should work" $ do
       wrapInParens "a" `shouldBe` "(a)"
@@ -52,6 +56,12 @@ spec = hspec $ do
       pExp "(a, )" `shouldBe` "(a, )"
       pExp "(, b)" `shouldBe` "(, b)"
       -- pExp "([)], a" `shouldBe` "([)]"
+
+    let
+      prop :: String -> Property
+      prop s = pExp s `isPrefixOf` s
+        $> counterexample [d|s, pExp s, pExp s `isPrefixOf` s|]
+    it "shouldn't modify the list" $ property prop
 
   describe "parseExp" $ do
     it "treats string literals as leaves" $ do
