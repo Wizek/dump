@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-missing-fields #-}
+{-# LANGUAGE DeriveFunctor #-}
 
 {-|
 
@@ -45,7 +46,7 @@ into this expression
 
 module Debug.Dump (d, dd, dump) where
 
-import qualified Internal.Utils as Utils
+import qualified Internal.Utils as U
 import Internal.Utils (($>), (.>))
 import Data.List
 import Debug.Trace
@@ -54,13 +55,8 @@ import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
 
-newtype Stripped = Stripped { unStripped :: String }
-newtype HsExpStr = HsExpStr { unHsExpStr :: String }
-newtype NameAndValue = NameAndValue { unNameAndValue :: String }
-
-instance Show Stripped where show = unStripped
-instance Show HsExpStr where show = unHsExpStr
-instance Show NameAndValue where show = unNameAndValue
+newtype HsExp a = HsExp { unHsExp :: a } deriving (Functor)
+instance (Show a) => Show (HsExp a) where show = unHsExp .> show
 
 -- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
@@ -79,21 +75,21 @@ process = id
   .> map nameAndValue
   .> join
   .> wrapInParens
-  .> unHsExpStr
+  .> unHsExp
   .> strToExp
   .> return
 
-splitOnCommas :: String -> [HsExpStr]
-splitOnCommas = Utils.separate .> map HsExpStr
+splitOnCommas :: String -> [HsExp String]
+splitOnCommas = U.separate .> map HsExp
 
-nameAndValue :: HsExpStr -> HsExpStr
-nameAndValue (HsExpStr str) = [qq|"({Utils.strip str}) = " ++ show ($str)|] $> HsExpStr
+nameAndValue :: HsExp String -> HsExp String
+nameAndValue = fmap $ \str-> [qq|"({U.strip str}) = " ++ show ($str)|]
 
-join :: [HsExpStr] -> HsExpStr
-join = map unHsExpStr .> intercalate [q| ++ "\t  " ++ |] .> HsExpStr
+join :: [HsExp String] -> HsExp String
+join = map unHsExp .> intercalate [q| ++ "\t  " ++ |] .> HsExp
 
-wrapInParens :: HsExpStr -> HsExpStr
-wrapInParens = unHsExpStr .> Utils.wrapInParens .> HsExpStr
+wrapInParens :: HsExp String -> HsExp String
+wrapInParens = fmap U.wrapInParens
 
 strToExp :: String -> Exp
 strToExp = parseExp .> either error id
