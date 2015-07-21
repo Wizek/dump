@@ -1,14 +1,14 @@
 {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE PartialTypeSignatures #-}
 
 import Test.Hspec
 
 import Debug.Dump
 import Test.QuickCheck
-import Internal.Parse
 import Text.InterpolatedString.Perl6
-import Utils
 import Data.List (isPrefixOf)
+
+import Internal.Parse
+import Internal.Utils
 
 main = spec
 

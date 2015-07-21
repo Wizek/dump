@@ -27,7 +27,7 @@ source-repository head
 
 library
   exposed-modules:    Debug.Dump
-  other-modules:      Utils, Internal.Parse
+  other-modules:      Internal.Utils, Internal.Parse
   -- other-extensions:
   build-depends:      base >=4 && <5
                     , template-haskell

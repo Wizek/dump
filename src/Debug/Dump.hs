@@ -13,7 +13,7 @@ import Debug.Dump (dd)
 
 module Debug.Dump (d, dd, dump) where
 
-import Utils
+import Internal.Utils
 import Data.List
 import Debug.Trace
 import Language.Haskell.TH

@@ -1,4 +1,4 @@
-module Utils where
+module Internal.Utils where
 
 import qualified Data.Text as T
 import Text.InterpolatedString.Perl6
