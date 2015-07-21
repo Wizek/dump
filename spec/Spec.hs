@@ -65,7 +65,7 @@ spec = hspec $ do
     it "shouldn't modify the list (QuickCheck)" $ property $ let
       prop :: String -> Property
       prop s = pExp s `isPrefixOf` s
-        $> counterexample [d|show s, show $ pExp s|]
+        $> counterexample [d|show s, pExp s|]
       in prop
 
   describe "pLeaf" $ do
