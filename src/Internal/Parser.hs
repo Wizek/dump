@@ -6,35 +6,35 @@ splitOnCommas :: String -> [String]
 splitOnCommas "" = []
 splitOnCommas str = match : splitOnCommas rest
   where
-    match = parseExp str
+    match = parseExpr str
     rest = drop (length match + 1) str
 
-parseExp :: String -> String
-parseExp = parseExpUntil ','
+parseExpr :: String -> String
+parseExpr = parseExprUntil ','
 
-parseExpUntil :: Char -> String -> String
-parseExpUntil _ "" = ""
-parseExpUntil c (x : xs)
-  | x == c    = if c == ',' then "" else [x]
-  | x == '('  = x : recurse ')'
-  | x == '['  = x : recurse ']'
-  | x == '\'' = x : leaf '\''
-  | x == '"'  = x : leaf '"'
-  | otherwise = x : parseExpUntil c xs
+parseExprUntil :: Char -> String -> String
+parseExprUntil _ "" = ""
+parseExprUntil c (x : xs)
+  | x == c      = if c == ',' then "" else [x]
+  | x == '('    = x : recurseUntil ')'
+  | x == '['    = x : recurseUntil ']'
+  | x == '\''   = x : leafUntil '\''
+  | x == '"'    = x : leafUntil '"'
+  | otherwise   = x : parseExprUntil c xs
     where
-      recurse = factory parseExpUntil
-      leaf = factory parseLeaf
-      factory :: (Char -> String -> String) -> Char -> String
-      factory parse cc = match ++ parseExpUntil c rest
+      recurseUntil = parseWith parseExprUntil
+      leafUntil    = parseWith parseLeafUntil
+      -- TODO parseWith parseUntil c xs cc = match ++ parseExprUntil c rest
+      parseWith parseUntil cc = match ++ parseExprUntil c rest
         where
-          match = parse cc xs
-          rest = drop (length match) xs
+          match = parseUntil cc xs
+          rest  = drop (length match) xs
 
-parseLeaf :: Char -> String -> String
-parseLeaf _  ""   = ""
-parseLeaf cc (x:xs)
+parseLeafUntil :: Char -> String -> String
+parseLeafUntil _  ""   = ""
+parseLeafUntil cc (x:xs)
   | x == cc   = [x]
   | x == '\\' = x : case xs of
     ""       -> ""
-    (y:ys)   -> y : parseLeaf cc ys
-  | otherwise = x : parseLeaf cc xs
+    (y:ys)   -> y : parseLeafUntil cc ys
+  | otherwise = x : parseLeafUntil cc xs
