@@ -55,9 +55,6 @@ import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
 
-newtype HsExp a = HsExp { unHsExp :: a } deriving (Functor)
-instance (Show a) => Show (HsExp a) where show = unHsExp .> show
-
 -- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
 dump = QuasiQuoter {quoteExp = process}
@@ -69,14 +66,16 @@ d = dump
 dd = dump
 
 
+newtype HsExp a = HsExp a deriving (Functor)
+unHsExp (HsExp s) = s
+
 process :: String -> Q Exp
 process = id
   .> splitOnCommas
   .> map nameAndValue
-  .> join
+  .> joinAsColumns
   .> wrapInParens
-  .> unHsExp
-  .> strToExp
+  .> parseHsStrToQQExp
   .> return
 
 splitOnCommas :: String -> [HsExp String]
@@ -85,13 +84,13 @@ splitOnCommas = U.separate .> map HsExp
 nameAndValue :: HsExp String -> HsExp String
 nameAndValue = fmap $ \str-> [qq|"({U.strip str}) = " ++ show ($str)|]
 
-join :: [HsExp String] -> HsExp String
-join = map unHsExp .> intercalate [q| ++ "\t  " ++ |] .> HsExp
+joinAsColumns :: [HsExp String] -> HsExp String
+joinAsColumns = map unHsExp .> intercalate [q| ++ "\t  " ++ |] .> HsExp
 
 wrapInParens :: HsExp String -> HsExp String
 wrapInParens = fmap U.wrapInParens
 
-strToExp :: String -> Exp
-strToExp = parseExp .> either error id
+parseHsStrToQQExp :: HsExp String -> Exp
+parseHsStrToQQExp = unHsExp .> parseExp .> either error id
 
 
