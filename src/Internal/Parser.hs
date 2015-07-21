@@ -6,35 +6,35 @@ splitOnCommas :: String -> [String]
 splitOnCommas "" = []
 splitOnCommas str = match : splitOnCommas rest
   where
-    match = pExp str
+    match = parseExp str
     rest = drop (length match + 1) str
 
-pExp :: String -> String
-pExp = pUntil ','
+parseExp :: String -> String
+parseExp = parseExpUntil ','
 
-pUntil :: Char -> String -> String
-pUntil _ "" = ""
-pUntil c (x : xs)
+parseExpUntil :: Char -> String -> String
+parseExpUntil _ "" = ""
+parseExpUntil c (x : xs)
   | x == c    = if c == ',' then "" else [x]
-  | x == '('  = x : matchAndRest ')'
-  | x == '['  = x : matchAndRest ']'
+  | x == '('  = x : recurse ')'
+  | x == '['  = x : recurse ']'
   | x == '\'' = x : leaf '\''
   | x == '"'  = x : leaf '"'
-  | otherwise = x : pUntil c xs
+  | otherwise = x : parseExpUntil c xs
     where
-      matchAndRest = factory pUntil
-      leaf = factory pLeaf
+      recurse = factory parseExpUntil
+      leaf = factory parseLeaf
       factory :: (Char -> String -> String) -> Char -> String
-      factory f cc = match ++ pUntil c rest
+      factory parse cc = match ++ parseExpUntil c rest
         where
-          match = f cc xs
+          match = parse cc xs
           rest = drop (length match) xs
 
-pLeaf :: Char -> String -> String
-pLeaf _  ""   = ""
-pLeaf cc (x:xs)
+parseLeaf :: Char -> String -> String
+parseLeaf _  ""   = ""
+parseLeaf cc (x:xs)
   | x == cc   = [x]
   | x == '\\' = x : case xs of
     ""       -> ""
-    (y:ys)   -> y : pLeaf cc ys
-  | otherwise = x : pLeaf cc xs
+    (y:ys)   -> y : parseLeaf cc ys
+  | otherwise = x : parseLeaf cc xs

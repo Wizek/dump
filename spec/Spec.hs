@@ -20,63 +20,63 @@ spec = hspec $ do
       wrapInParens "a" `shouldBe` "(a)"
       wrapInParens "" `shouldBe` "()"
 
-  describe "pExp" $ do
+  describe "parseExp" $ do
     it "handles flat" $ do
-      pExp "asd" `shouldBe` "asd"
-      pExp "asd,asd" `shouldBe` "asd"
-      pExp "asd,a,sd" `shouldBe` "asd"
+      parseExp "asd" `shouldBe` "asd"
+      parseExp "asd,asd" `shouldBe` "asd"
+      parseExp "asd,a,sd" `shouldBe` "asd"
 
     it "handles parens" $ do
-      pExp "(a,b)" `shouldBe` "(a,b)"
-      pExp "(a,b) (a,b)" `shouldBe` "(a,b) (a,b)"
-      pExp "(a,b), c" `shouldBe` "(a,b)"
-      pExp "((a), b), c" `shouldBe` "((a), b)"
-      pExp "((a,b),(a,b)), a" `shouldBe` "((a,b),(a,b))"
+      parseExp "(a,b)" `shouldBe` "(a,b)"
+      parseExp "(a,b) (a,b)" `shouldBe` "(a,b) (a,b)"
+      parseExp "(a,b), c" `shouldBe` "(a,b)"
+      parseExp "((a), b), c" `shouldBe` "((a), b)"
+      parseExp "((a,b),(a,b)), a" `shouldBe` "((a,b),(a,b))"
 
     it "handles char literals" $ do
-      pExp "','" `shouldBe` "','"
-      pExp "',', a" `shouldBe` "','"
+      parseExp "','" `shouldBe` "','"
+      parseExp "',', a" `shouldBe` "','"
 
     it "handles string literals" $ do
-      pExp [q|","|] `shouldBe` [q|","|]
-      pExp [q|",", a|] `shouldBe` [q|","|]
+      parseExp [q|","|] `shouldBe` [q|","|]
+      parseExp [q|",", a|] `shouldBe` [q|","|]
 
     it "handles list literals" $ do
-      pExp "[a,b]" `shouldBe` "[a,b]"
+      parseExp "[a,b]" `shouldBe` "[a,b]"
 
     it "treats string literals as leaves" $ do
-      pExp [q|"(", a|] `shouldBe` [q|"("|]
+      parseExp [q|"(", a|] `shouldBe` [q|"("|]
 
     it "support escaping in leaves" $ do
-      pExp [q|"\"", a|] `shouldBe` [q|"\""|]
-      pExp [q|"a" ++ "b", a|] `shouldBe` [q|"a" ++ "b"|]
+      parseExp [q|"\"", a|] `shouldBe` [q|"\""|]
+      parseExp [q|"a" ++ "b", a|] `shouldBe` [q|"a" ++ "b"|]
 
     it "misc" $ do
-      pExp [q|"((", a|] `shouldBe` [q|"(("|]
-      pExp [q|"()(", a|] `shouldBe` [q|"()("|]
-      pExp "(a, )" `shouldBe` "(a, )"
-      pExp "(, b)" `shouldBe` "(, b)"
+      parseExp [q|"((", a|] `shouldBe` [q|"(("|]
+      parseExp [q|"()(", a|] `shouldBe` [q|"()("|]
+      parseExp "(a, )" `shouldBe` "(a, )"
+      parseExp "(, b)" `shouldBe` "(, b)"
 
     it "shouldn't modify the list" $ do
-      pExp "[" `shouldBe` "["
-      pExp "([)]" `shouldBe` "([)]"
-      -- pExp "([)], a" `shouldBe` "([)]"
+      parseExp "[" `shouldBe` "["
+      parseExp "([)]" `shouldBe` "([)]"
+      -- parseExp "([)], a" `shouldBe` "([)]"
 
     it "shouldn't modify the list (QuickCheck)" $ property $ let
       prop :: String -> Property
-      prop s = pExp s `isPrefixOf` s
-        $> counterexample [d|show s, pExp s|]
+      prop s = parseExp s `isPrefixOf` s
+        $> counterexample [d|show s, parseExp s|]
       in prop
 
-  describe "pLeaf" $ do
+  describe "parseLeaf" $ do
     it "knows to stop on regular quote" $ do
-      pLeaf '"' [q|a", b|] `shouldBe` [q|a"|]
+      parseLeaf '"' [q|a", b|] `shouldBe` [q|a"|]
 
     it "knows not to terminate after escaped quote" $ do
-      pLeaf '"' [q|a\"", b|] `shouldBe` [q|a\""|]
+      parseLeaf '"' [q|a\"", b|] `shouldBe` [q|a\""|]
 
     it "does not trip up on escape characters" $ do
-      pLeaf '"' [q|a\\ b|] `shouldBe` [q|a\\ b|]
+      parseLeaf '"' [q|a\\ b|] `shouldBe` [q|a\\ b|]
 
   describe "splitOnCommas" $ do
     it "should work" $ do
