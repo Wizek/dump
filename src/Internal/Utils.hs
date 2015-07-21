@@ -3,7 +3,7 @@ module Internal.Utils where
 import qualified Data.Text as T
 import Text.InterpolatedString.Perl6
 import Debug.Trace
-import Internal.Parse
+import Internal.Parser
 
 (.>) = flip (.); infixl 9 .>
 ($>) = flip ($); infixl 0 $>
@@ -15,6 +15,3 @@ wrapInParens = wrapIn "(" ")"
 
 wrapIn :: String -> String -> String -> String
 wrapIn a c b = a ++ b ++ c
-
-separate :: String -> [String]
-separate = parseSimple

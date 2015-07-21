@@ -1,10 +1,10 @@
-module Internal.Parse where
+module Internal.Parser where
 
 import Debug.Trace
 
-parseSimple :: String -> [String]
-parseSimple "" = []
-parseSimple str = match : parseSimple rest
+splitOnCommas :: String -> [String]
+splitOnCommas "" = []
+splitOnCommas str = match : splitOnCommas rest
   where
     match = pExp str
     rest = drop (length match + 1) str

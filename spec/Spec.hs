@@ -7,7 +7,7 @@ import Test.QuickCheck
 import Text.InterpolatedString.Perl6
 import Data.List (isPrefixOf)
 
-import Internal.Parse
+import Internal.Parser
 import Internal.Utils
 
 main = spec
@@ -78,17 +78,18 @@ spec = hspec $ do
     it "does not trip up on escape characters" $ do
       pLeaf '"' [q|a\\ b|] `shouldBe` [q|a\\ b|]
 
-  describe "separate" $ do
+  describe "splitOnCommas" $ do
     it "should work" $ do
-      separate "a" `shouldBe` ["a"]
-      separate "a,b" `shouldBe` ["a", "b"]
-      separate "a, b" `shouldBe` ["a", " b"]
-      separate "(a)" `shouldBe` ["(a)"]
-      separate "(a, b)" `shouldBe` ["(a, b)"]
-      separate "(a, b), b" `shouldBe` ["(a, b)", " b"]
-      separate "','" `shouldBe` ["','"]
-      separate "a ',' b" `shouldBe` ["a ',' b"]
-      separate "(a, b \")\"), b" `shouldBe` ["(a, b \")\")", " b"]
+      let s = splitOnCommas
+      s "a" `shouldBe` ["a"]
+      s "a,b" `shouldBe` ["a", "b"]
+      s "a, b" `shouldBe` ["a", " b"]
+      s "(a)" `shouldBe` ["(a)"]
+      s "(a, b)" `shouldBe` ["(a, b)"]
+      s "(a, b), b" `shouldBe` ["(a, b)", " b"]
+      s "','" `shouldBe` ["','"]
+      s "a ',' b" `shouldBe` ["a ',' b"]
+      s "(a, b \")\"), b" `shouldBe` ["(a, b \")\")", " b"]
 
   describe "Debug.Dump" $ do
     -- TODO decide if this is useful enough to warrant support

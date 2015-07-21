@@ -46,8 +46,9 @@ into this expression
 
 module Debug.Dump (d, dd, dump) where
 
-import qualified Internal.Utils as U
 import Internal.Utils (($>), (.>))
+import qualified Internal.Utils as Utils
+import qualified Internal.Parser as Parser
 import Data.List
 import Debug.Trace
 import Language.Haskell.TH
@@ -83,16 +84,16 @@ process = id
   .> return
 
 splitOnCommas :: String -> [HsExp String]
-splitOnCommas = U.separate .> map HsExp
+splitOnCommas = Parser.splitOnCommas .> map HsExp
 
 nameAndValue :: HsExp String -> HsExp String
-nameAndValue = fmap $ \str-> [qq|"({U.strip str}) = " ++ show ($str)|]
+nameAndValue = fmap $ \str-> [qq|"({Utils.strip str}) = " ++ show ($str)|]
 
 joinAsColumns :: [HsExp String] -> HsExp String
 joinAsColumns = sequenceA .> fmap (intercalate [q| ++ "\t  " ++ |])
 
 wrapInParens :: HsExp String -> HsExp String
-wrapInParens = fmap U.wrapInParens
+wrapInParens = fmap Utils.wrapInParens
 
 parseHsStrToQQExp :: HsExp String -> Exp
 parseHsStrToQQExp = unHsExp .> parseExp .> either error id
