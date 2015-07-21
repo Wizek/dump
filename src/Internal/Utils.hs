@@ -18,10 +18,3 @@ wrapIn a c b = a ++ b ++ c
 
 separate :: String -> [String]
 separate = parseSimple
--- separate = wordsWhen (== ',')
-
-wordsWhen     :: (Char -> Bool) -> String -> [String]
-wordsWhen p s =  case dropWhile p s of
-                      "" -> []
-                      s' -> w : wordsWhen p s''
-                            where (w, s'') = break p s'
