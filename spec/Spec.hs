@@ -19,7 +19,7 @@ spec = hspec $ do
       wrapInParens "a" `shouldBe` "(a)"
       wrapInParens "" `shouldBe` "()"
 
-  describe "parseExp" $ do
+  describe "pExp" $ do
     it "handles flat" $ do
       pExp "asd" `shouldBe` "asd"
       pExp "asd,asd" `shouldBe` "asd"
@@ -63,11 +63,15 @@ spec = hspec $ do
         $> counterexample [d|s, pExp s, pExp s `isPrefixOf` s|]
     it "shouldn't modify the list" $ property prop
 
-  describe "parseExp" $ do
-    it "treats string literals as leaves" $ do
-      pLeaf '"' "a\", b" `shouldBe` "a"
-      pLeaf '"' "a\\\"\", b" `shouldBe` "a\\\""
-      pLeaf '"' "a\\" `shouldBe` "a\\"
+  describe "pLeaf" $ do
+    it "knows to stop on regular quote" $ do
+      pLeaf '"' [q|a", b|] `shouldBe` [q|a"|]
+
+    it "knows not to terminate after escaped quote" $ do
+      pLeaf '"' [q|a\"", b|] `shouldBe` [q|a\""|]
+
+    it "does not trip up on escape characters" $ do
+      pLeaf '"' [q|a\\ b|] `shouldBe` [q|a\\ b|]
 
   describe "separate" $ do
     it "should work" $ do

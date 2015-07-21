@@ -15,7 +15,7 @@ pExp = pUntil 0 ','
 pUntil :: Int -> Char -> String -> String
 pUntil _ _ "" = ""
 pUntil i c (x : xs)
-  | x == c    = ""
+  | x == c    = if c == ',' then "" else [x]
   | x == '('  = x : matchAndRest ')'
   | x == '['  = x : matchAndRest ']'
   | x == '\'' = x : leaf '\''
@@ -25,15 +25,15 @@ pUntil i c (x : xs)
       matchAndRest = factory $ pUntil $ i + 1
       leaf = factory pLeaf
       factory :: (Char -> String -> String) -> Char -> String
-      factory f cc = match ++ [cc] ++ pUntil i c rest
+      factory f cc = match ++ pUntil i c rest
         where
           match = f cc xs
-          rest = drop (length match + 1) xs
+          rest = drop (length match) xs
 
 pLeaf :: Char -> String -> String
 pLeaf _  ""   = ""
 pLeaf cc (x:xs)
-  | x == cc   = ""
+  | x == cc   = [x]
   | x == '\\' = x : case xs of
     ""       -> ""
     (y:ys)   -> y : pLeaf cc ys
