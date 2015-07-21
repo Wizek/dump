@@ -10,22 +10,22 @@ splitOnCommas str = match : splitOnCommas rest
     rest = drop (length match + 1) str
 
 pExp :: String -> String
-pExp = pUntil 0 ','
+pExp = pUntil ','
 
-pUntil :: Int -> Char -> String -> String
-pUntil _ _ "" = ""
-pUntil i c (x : xs)
+pUntil :: Char -> String -> String
+pUntil _ "" = ""
+pUntil c (x : xs)
   | x == c    = if c == ',' then "" else [x]
   | x == '('  = x : matchAndRest ')'
   | x == '['  = x : matchAndRest ']'
   | x == '\'' = x : leaf '\''
   | x == '"'  = x : leaf '"'
-  | otherwise = x : pUntil i c xs
+  | otherwise = x : pUntil c xs
     where
-      matchAndRest = factory $ pUntil $ i + 1
+      matchAndRest = factory pUntil
       leaf = factory pLeaf
       factory :: (Char -> String -> String) -> Char -> String
-      factory f cc = match ++ pUntil i c rest
+      factory f cc = match ++ pUntil c rest
         where
           match = f cc xs
           rest = drop (length match) xs
