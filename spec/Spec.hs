@@ -1,4 +1,5 @@
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 
 import Test.Hspec
 
@@ -55,13 +56,17 @@ spec = hspec $ do
       pExp [q|"()(", a|] `shouldBe` [q|"()("|]
       pExp "(a, )" `shouldBe` "(a, )"
       pExp "(, b)" `shouldBe` "(, b)"
+
+    it "shouldn't modify the list" $ do
+      pExp "[" `shouldBe` "["
+      pExp "([)]" `shouldBe` "([)]"
       -- pExp "([)], a" `shouldBe` "([)]"
 
-    let
+    it "shouldn't modify the list (QuickCheck)" $ property $ let
       prop :: String -> Property
       prop s = pExp s `isPrefixOf` s
-        $> counterexample [d|s, pExp s, pExp s `isPrefixOf` s|]
-    it "shouldn't modify the list" $ property prop
+        $> counterexample [d|show s, show $ pExp s|]
+      in prop
 
   describe "pLeaf" $ do
     it "knows to stop on regular quote" $ do
