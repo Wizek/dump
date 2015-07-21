@@ -45,7 +45,8 @@ into this expression
 
 module Debug.Dump (d, dd, dump) where
 
-import Internal.Utils
+import qualified Internal.Utils as Utils
+import Internal.Utils (($>), (.>))
 import Data.List
 import Debug.Trace
 import Language.Haskell.TH
@@ -53,6 +54,13 @@ import Language.Haskell.TH.Quote
 import Language.Haskell.Meta.Parse
 import Text.InterpolatedString.Perl6
 
+newtype Stripped = Stripped { unStripped :: String }
+newtype HsExpStr = HsExpStr { unHsExpStr :: String }
+newtype NameAndValue = NameAndValue { unNameAndValue :: String }
+
+instance Show Stripped where show = unStripped
+instance Show HsExpStr where show = unHsExpStr
+instance Show NameAndValue where show = unNameAndValue
 
 -- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
@@ -64,22 +72,30 @@ d = dump
 -- | Shorthand for `dump`.
 dd = dump
 
+
 process :: String -> Q Exp
-process str = pairsOf str $> parse $> return
-  where
-    pairsOf :: String -> String
-    pairsOf str = join (map pairOf list) $> wrapInParens
-      where
-        join :: [String] -> String
-        join = intercalate ([q| ++ "\t  " ++ |] :: String)
-        list :: [String]
-        list = separate str
-    pairOf :: String -> String
-    pairOf str = [qq|"($stripped) = " ++ show ($str)|]
-      where
-        stripped :: String
-        stripped = strip str
-    parse :: String -> Exp
-    parse = parseExp .> either error id
+process = id
+  .> splitOnCommas
+  .> map nameAndValue
+  .> join
+  .> wrapInParens
+  .> unHsExpStr
+  .> strToExp
+  .> return
+
+splitOnCommas :: String -> [HsExpStr]
+splitOnCommas = Utils.separate .> map HsExpStr
+
+nameAndValue :: HsExpStr -> HsExpStr
+nameAndValue (HsExpStr str) = [qq|"({Utils.strip str}) = " ++ show ($str)|] $> HsExpStr
+
+join :: [HsExpStr] -> HsExpStr
+join = map unHsExpStr .> intercalate [q| ++ "\t  " ++ |] .> HsExpStr
+
+wrapInParens :: HsExpStr -> HsExpStr
+wrapInParens = unHsExpStr .> Utils.wrapInParens .> HsExpStr
+
+strToExp :: String -> Exp
+strToExp = parseExp .> either error id
 
 

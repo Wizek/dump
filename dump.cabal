@@ -57,4 +57,4 @@ test-suite spec
   default-language:   Haskell2010
   default-extensions: QuasiQuotes
   ghc-options:
-    -- -ddump-splices
+    --ddump-splices
