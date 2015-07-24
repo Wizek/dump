@@ -36,8 +36,8 @@ spec = hspec $ do
       fff [q|,',c|] ['\''] `shouldBe` ([q|,'|], "c")
       fff [q|',',c|] [] `shouldBe` ([q|','|], "c")
       fff [q|'"',c|] [] `shouldBe` ([q|'"'|], "c")
-      -- fff [q|'\',',|] [] `shouldBe` ([q|'\''|], "c")
-      -- fff [q|'\',',|] [] `shouldBe` ([q|'\''|], "c")
+      -- fff [q|'\',',|] [] `shouldBe` ([q|'\','|], "c")
+      fff [q|"\",",c|] [] `shouldBe` ([q|"\","|], "c")
       fff [q|'\'',c|] [] `shouldBe` ([q|'\''|], "c")
       fff [q|(\),c|] [] `shouldBe` ([q|(\)|], "c")
 

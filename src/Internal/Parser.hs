@@ -49,16 +49,17 @@ putMatch x (m, r) = (x:m, r)
 
 fff :: String -> [Char] -> (String, String)
 fff "" _ = ("", "")
-fff (x:xs) stack = case (x:xs, stack, s == x, s `elem` "'\"") of
-  (',' :_, [], _, _) -> ("", xs)
-  ('\\':n:xs, _:_, _, True) ->  putMatch x $ putMatch n $ fff xs stack
-  ( _  :_, _:_, True, _) -> putMatch x $ fff xs tack
-  ('(' :_, _, _, _) -> putMatch x $ fff xs (append ')')
-  ('[' :_, _, _, _) -> putMatch x $ fff xs (append ']')
-  ('"' :_, _, _, _) -> putMatch x $ fff xs (append '"')
-  ('\'':_, _, _, _) -> putMatch x $ fff xs (append '\'')
-  _              -> putMatch x $ fff xs stack
+fff (',':xs) [] = ("", xs)
+fff (x:xs) stack = putMatch x $ case pattern of
+  ('\\':n:xs, _:_, _, True) ->  putMatch n $ fff xs stack
+  ( _  :_, _:_, True, _) -> fff xs tack
+  ('(' :_, _, _, _) -> fff xs (append ')')
+  ('[' :_, _, _, _) -> fff xs (append ']')
+  ('"' :_, _, _, _) -> fff xs (append '"')
+  ('\'':_, _, _, _) -> fff xs (append '\'')
+  _                 -> fff xs stack
   where
+    pattern = (x:xs, stack, s == x, s `elem` "'\"")
     (_:x2:x2s) = xs
     (s:tack) = stack
     append c = case stack of
