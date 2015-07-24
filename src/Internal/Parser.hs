@@ -9,7 +9,7 @@ import Debug.Trace
 
 splitOnCommas :: String -> [String]
 splitOnCommas "" = []
-splitOnCommas str = fff str
+-- splitOnCommas str = fff str
 
 -- fff str = match : splitOnCommas rest
 --   where
@@ -35,28 +35,28 @@ splitOnCommas str = fff str
 -- parseLeaf = do
 --   noneOf ","
 
--- parseLeafUntil :: Char -> String -> (String, String)
--- parseLeafUntil _  "\\" = ("\\", "")
--- parseLeafUntil _  ""   = ("",   "")
--- parseLeafUntil cc (x:xs)
---   | x == cc   = ([x], xs)
---   | x == '\\' = let (y:ys) = xs in
---     putMatch x $ putMatch y $ parseLeafUntil cc ys
---   | otherwise = putMatch x $ parseLeafUntil cc xs
+parseLeaf :: Char -> String -> [Char] -> (String, String)
+parseLeaf _ "\\" _ = ("\\", "")
+parseLeaf _ ""   _ = ("",   "")
+parseLeaf cc (x:xs) stack
+  | x == cc   = withMatch x $ fff xs stack
+  | x == '\\' = let (y:ys) = xs in
+    withMatch x $ withMatch y $ parseLeaf cc ys stack
+  | otherwise = withMatch x $ parseLeaf cc xs stack
 
-putMatch :: a -> ([a], [b]) -> ([a], [b])
-putMatch x (m, r) = (x:m, r)
+withMatch :: a -> ([a], [b]) -> ([a], [b])
+withMatch x (m, r) = (x:m, r)
 
 fff :: String -> [Char] -> (String, String)
 fff "" _ = ("", "")
 fff (',':xs) [] = ("", xs)
-fff (x:xs) stack = putMatch x $ case pattern of
-  ('\\':n:xs, _:_, _, True) ->  putMatch n $ fff xs stack
+fff (x:xs) stack = withMatch x $ case pattern of
+  ('\\':n:xs, _:_, _, True) ->  withMatch n $ fff xs stack
   ( _  :_, _:_, True, _) -> fff xs tack
   ('(' :_, _, _, _) -> fff xs (append ')')
   ('[' :_, _, _, _) -> fff xs (append ']')
-  ('"' :_, _, _, _) -> fff xs (append '"')
-  ('\'':_, _, _, _) -> fff xs (append '\'')
+  ('"' :_, _, _, _) -> parseLeaf '"'  xs stack
+  ('\'':_, _, _, _) -> parseLeaf '\'' xs stack
   _                 -> fff xs stack
   where
     pattern = (x:xs, stack, s == x, s `elem` "'\"")
