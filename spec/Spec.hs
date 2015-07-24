@@ -93,16 +93,19 @@ spec = hspec $ do
       p []     "(a,b),c" `shouldBe` ("(a,b)", "c")
       p []     "[a,b],c" `shouldBe` ("[a,b]", "c")
       p "]]"   "],b],c" `shouldBe` ("],b]", "c")
-      -- p ['"']  [q|a,b",c|] `shouldBe` ([q|a,b"|], "c")
       p []     [q|"a,b",c|] `shouldBe` ([q|"a,b"|], "c")
-      -- p ['"']  [q|(a",c|] `shouldBe` ([q|(a"|], "c")
-      -- p ['\''] [q|,',c|] `shouldBe` ([q|,'|], "c")
       p []     [q|',',c|] `shouldBe` ([q|','|], "c")
       p []     [q|'"',c|] `shouldBe` ([q|'"'|], "c")
       -- p []     [q|'\',',|] `shouldBe` ([q|'\','|], "c")
       p []     [q|"\",",c|] `shouldBe` ([q|"\","|], "c")
       p []     [q|'\'',c|] `shouldBe` ([q|'\''|], "c")
       p []     [q|(\),c|] `shouldBe` ([q|(\)|], "c")
+
+    -- TODO decide
+    -- it "should? handle quotes int its own stack" $ do
+    --   p ['"']  [q|a,b",c|] `shouldBe` ([q|a,b"|], "c")
+    --   p ['"']  [q|(a",c|] `shouldBe` ([q|(a"|], "c")
+    --   p ['\''] [q|,',c|] `shouldBe` ([q|,'|], "c")
 
   describe "splitOnCommas" $ do
     it "should work" $ do
