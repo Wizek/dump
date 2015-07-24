@@ -42,19 +42,19 @@ parseExpr (s:tack) (x:xs) | x == s = withMatch x $ parseExpr tack xs
 parseExpr stack (x:xs) = withMatch x $ case x of
   '('  -> parseExpr (')':stack) xs
   '['  -> parseExpr (']':stack) xs
-  '"'  -> parseLeaf '"'  xs stack
-  '\'' -> parseLeaf '\'' xs stack
+  '"'  -> parseLeaf (parseExpr stack) '"'  xs
+  '\'' -> parseLeaf (parseExpr stack) '\'' xs
   _    -> parseExpr stack xs
 
-parseLeaf :: Char -> String -> [Char] -> (String, String)
-parseLeaf _ "\\" _ = ("\\", "")
-parseLeaf _ ""   _ = ("",   "")
-parseLeaf cc (x:xs) stack = withMatch x result
+parseLeaf :: (String -> (String, String)) -> Char -> String -> (String, String)
+parseLeaf _ _ "\\" = ("\\", "")
+parseLeaf _ _ ""   = ("",   "")
+parseLeaf cont cc (x:xs) = withMatch x result
   where
   result
-    | x == cc   = parseExpr stack xs
-    | x == '\\' = withMatch y $ parseLeaf cc ys stack
-    | otherwise = parseLeaf cc xs stack
+    | x == cc   = cont xs
+    | x == '\\' = withMatch y $ parseLeaf cont cc ys
+    | otherwise = parseLeaf cont cc xs
   (y:ys) = xs
 
 withMatch :: a -> ([a], [b]) -> ([a], [b])
