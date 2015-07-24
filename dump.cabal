@@ -32,6 +32,7 @@ library
                     , template-haskell
                     , haskell-src-meta
                     , interpolatedstring-perl6 == 1.0.*
+                    , text
   ghc-options:
     --ddump-splices
     --funbox-strict-fields
@@ -45,6 +46,7 @@ test-suite spec
                     , template-haskell
                     , haskell-src-meta
                     , interpolatedstring-perl6 == 1.0.*
+                    , text
 
                     , hspec
                     , QuickCheck
