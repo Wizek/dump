@@ -32,7 +32,7 @@ library
   build-depends:      base >=4 && <5
                     , template-haskell
                     , haskell-src-meta
-                    , interpolatedstring-perl6
+                    , interpolatedstring-perl6 == 1.0.*
                     , text
   ghc-options:
     --ddump-splices
@@ -49,7 +49,7 @@ test-suite spec
 
                     , template-haskell
                     , haskell-src-meta
-                    , interpolatedstring-perl6
+                    , interpolatedstring-perl6 == 1.0.*
                     , text
 
   hs-source-dirs:     spec, src
@@ -64,10 +64,11 @@ executable benchmark
                     , hspec
                     , QuickCheck
                     , criterion
+                    , deepseq
 
                     , template-haskell
                     , haskell-src-meta
-                    , interpolatedstring-perl6
+                    , interpolatedstring-perl6 == 1.0.*
                     , text
 
   hs-source-dirs:     spec, src
