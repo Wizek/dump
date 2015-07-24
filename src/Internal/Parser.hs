@@ -51,18 +51,13 @@ fff :: String -> [Char] -> (String, String)
 fff "" _ = ("", "")
 fff (',':xs) [] = ("", xs)
 fff (x:xs) stack = withMatch x $ case pattern of
-  ('\\':n:xs, _:_, _, True) ->  withMatch n $ fff xs stack
-  ( _  :_, _:_, True, _) -> fff xs tack
-  ('(' :_, _, _, _) -> fff xs (append ')')
-  ('[' :_, _, _, _) -> fff xs (append ']')
-  ('"' :_, _, _, _) -> parseLeaf '"'  xs stack
-  ('\'':_, _, _, _) -> parseLeaf '\'' xs stack
+  ( _  :_, _:_, True) -> fff xs tack
+  ('(' :_, _, _) -> fff xs (')':stack)
+  ('[' :_, _, _) -> fff xs (']':stack)
+  ('"' :_, _, _) -> parseLeaf '"'  xs stack
+  ('\'':_, _, _) -> parseLeaf '\'' xs stack
   _                 -> fff xs stack
   where
-    pattern = (x:xs, stack, s == x, s `elem` "'\"")
+    pattern = (x:xs, stack, s == x)
     (_:x2:x2s) = xs
     (s:tack) = stack
-    append c = case stack of
-      ('"':_)   -> stack
-      ('\'':_)  -> stack
-      otherwise -> c:stack
