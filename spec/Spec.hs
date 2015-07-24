@@ -20,19 +20,30 @@ spec = hspec $ do
       wrapInParens "a" `shouldBe` "(a)"
       wrapInParens "" `shouldBe` "()"
 
-  describe "parseLeafUntil" $ do
-    let p = parseLeafUntil '"'
-    it "knows to stop on regular quote" $ do
-      p [q|a"   |] `shouldBe` ([q|a"|], "   ")
+  describe "fff" $ do
+    it "should work" $ do
+      fff "asd" [] `shouldBe` ("asd", "")
+      fff "a,b" [] `shouldBe` ("a", "b")
+      fff "a,b" ")" `shouldBe` ("a,b", "")
+      fff "(a,b)" [] `shouldBe` ("(a,b)", "")
+      fff "(a,b),c" [] `shouldBe` ("(a,b)", "c")
+      fff "[a,b],c" [] `shouldBe` ("[a,b]", "c")
+      fff "],b],c" "]]" `shouldBe` ("],b]", "c")
+      fff "],b],c" "]]" `shouldBe` ("],b]", "c")
 
-    it "knows not to terminate after escaped quote" $ do
-      p [q|a\""   |] `shouldBe` ([q|a\""|], "   ")
+  -- describe "parseLeafUntil" $ do
+  --   let p = parseLeafUntil '"'
+  --   it "knows to stop on regular quote" $ do
+  --     p [q|a"   |] `shouldBe` ([q|a"|], "   ")
 
-    it "does not trip up on escape characters" $ do
-      p [q|a\\  |] `shouldBe` ([q|a\\  |], "")
+  --   it "knows not to terminate after escaped quote" $ do
+  --     p [q|a\""   |] `shouldBe` ([q|a\""|], "   ")
 
-    it "does not trip up on escape character at the end" $ do
-      p [q|a\\|] `shouldBe` ([q|a\\|], "")
+  --   it "does not trip up on escape characters" $ do
+  --     p [q|a\\  |] `shouldBe` ([q|a\\  |], "")
+
+  --   it "does not trip up on escape character at the end" $ do
+  --     p [q|a\\|] `shouldBe` ([q|a\\|], "")
 
   -- describe "parseExpr" $ do
   --   let p = parseExpr .> fst
