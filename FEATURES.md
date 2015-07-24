@@ -48,5 +48,6 @@ n/a
 
 # Miscellaneous
 
+* Refactored and conceptually clean code
 * Some Haddock documentation, probably more to come
 * Description in FEATURES.md
