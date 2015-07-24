@@ -1,50 +1,22 @@
-{-# OPTIONS_GHC -fdefer-type-errors #-}
-{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
-
 module Internal.Parser where
-
-import Debug.Trace
--- import Text.Parsec
--- import Text.Parsec.String
 
 splitOnCommas :: String -> [String]
 splitOnCommas "" = []
--- splitOnCommas str = fff str
+splitOnCommas expr = let (m, r) = parseExpr expr in m : splitOnCommas r
 
--- fff str = match : splitOnCommas rest
---   where
---     match = parseExprUntil ',' str
---     rest = drop (length match + 1) str
+parseExpr :: String -> (String, String)
+parseExpr = parseExpr' []
 
--- parseExpr :: String -> String
--- parseExpr = parseExprUntil ','
-
-
--- splitAt _ []     = ([], [])
--- splitAt 0 xs     = ([], xs)
--- splitAt n (x:xs) = (x:m, r)
---     where (m, r) = splitAt (n-1) xs
-
--- groupsOf :: Int -> [a] -> [[a]]
--- groupsOf n [] = []
--- groupsOf n xs = m : groupsOf n r
---     where (m, r) = splitAt n xs
-
--- groupsOf 2 [1..5]
-
--- parseLeaf = do
---   noneOf ","
-
-parseExpr :: [Char] -> String -> (String, String)
-parseExpr _ "" = ("", "")
-parseExpr [] (',':xs) = ("", xs)
-parseExpr (s:tack) (x:xs) | x == s = withMatch x $ parseExpr tack xs
-parseExpr stack (x:xs) = withMatch x $ case x of
-  '('  -> parseExpr (')':stack) xs
-  '['  -> parseExpr (']':stack) xs
-  '"'  -> parseLeaf (parseExpr stack) '"'  xs
-  '\'' -> parseLeaf (parseExpr stack) '\'' xs
-  _    -> parseExpr stack xs
+parseExpr' :: [Char] -> String -> (String, String)
+parseExpr' _ "" = ("", "")
+parseExpr' [] (',':xs) = ("", xs)
+parseExpr' (s:tack) (x:xs) | x == s = withMatch x $ parseExpr' tack xs
+parseExpr' stack (x:xs) = withMatch x $ case x of
+  '('  -> parseExpr' (')':stack) xs
+  '['  -> parseExpr' (']':stack) xs
+  '"'  -> parseLeaf (parseExpr' stack) '"'  xs
+  '\'' -> parseLeaf (parseExpr' stack) '\'' xs
+  _    -> parseExpr' stack xs
 
 parseLeaf :: (String -> (String, String)) -> Char -> String -> (String, String)
 parseLeaf _ _ "\\" = ("\\", "")
