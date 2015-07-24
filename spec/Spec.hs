@@ -22,24 +22,25 @@ spec = hspec $ do
 
   describe "fff" $ do
     it "should work" $ do
-      fff "asd" [] `shouldBe` ("asd", "")
-      fff "a,b" [] `shouldBe` ("a", "b")
-      fff "a,b" ")" `shouldBe` ("a,b", "")
-      fff "(a,b)" [] `shouldBe` ("(a,b)", "")
-      fff "(a,b),c" [] `shouldBe` ("(a,b)", "c")
-      fff "[a,b],c" [] `shouldBe` ("[a,b]", "c")
-      fff "],b],c" "]]" `shouldBe` ("],b]", "c")
-      fff "],b],c" "]]" `shouldBe` ("],b]", "c")
-      -- fff [q|a,b",c|] ['"'] `shouldBe` ([q|a,b"|], "c")
-      fff [q|"a,b",c|] [] `shouldBe` ([q|"a,b"|], "c")
-      -- fff [q|(a",c|] ['"'] `shouldBe` ([q|(a"|], "c")
-      -- fff [q|,',c|] ['\''] `shouldBe` ([q|,'|], "c")
-      fff [q|',',c|] [] `shouldBe` ([q|','|], "c")
-      fff [q|'"',c|] [] `shouldBe` ([q|'"'|], "c")
-      -- fff [q|'\',',|] [] `shouldBe` ([q|'\','|], "c")
-      fff [q|"\",",c|] [] `shouldBe` ([q|"\","|], "c")
-      fff [q|'\'',c|] [] `shouldBe` ([q|'\''|], "c")
-      fff [q|(\),c|] [] `shouldBe` ([q|(\)|], "c")
+      let p = parseExpr
+      p "asd" [] `shouldBe` ("asd", "")
+      p "a,b" [] `shouldBe` ("a", "b")
+      p "a,b" ")" `shouldBe` ("a,b", "")
+      p "(a,b)" [] `shouldBe` ("(a,b)", "")
+      p "(a,b),c" [] `shouldBe` ("(a,b)", "c")
+      p "[a,b],c" [] `shouldBe` ("[a,b]", "c")
+      p "],b],c" "]]" `shouldBe` ("],b]", "c")
+      p "],b],c" "]]" `shouldBe` ("],b]", "c")
+      -- p [q|a,b",c|] ['"'] `shouldBe` ([q|a,b"|], "c")
+      p [q|"a,b",c|] [] `shouldBe` ([q|"a,b"|], "c")
+      -- p [q|(a",c|] ['"'] `shouldBe` ([q|(a"|], "c")
+      -- p [q|,',c|] ['\''] `shouldBe` ([q|,'|], "c")
+      p [q|',',c|] [] `shouldBe` ([q|','|], "c")
+      p [q|'"',c|] [] `shouldBe` ([q|'"'|], "c")
+      -- p [q|'\',',|] [] `shouldBe` ([q|'\','|], "c")
+      p [q|"\",",c|] [] `shouldBe` ([q|"\","|], "c")
+      p [q|'\'',c|] [] `shouldBe` ([q|'\''|], "c")
+      p [q|(\),c|] [] `shouldBe` ([q|(\)|], "c")
 
   -- describe "parseLeafUntil" $ do
   --   let p = parseLeafUntil '"'
