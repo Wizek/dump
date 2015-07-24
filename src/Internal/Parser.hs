@@ -4,21 +4,22 @@ type Parser = String -> (String, String)
 
 splitOnCommas :: String -> [String]
 splitOnCommas "" = []
-splitOnCommas expr = let (m, r) = parseExpr expr in m : splitOnCommas r
+splitOnCommas expr = m : splitOnCommas r
+  where (m, r) = parseExpr expr
 
 parseExpr :: Parser
-parseExpr = parseExpr' []
+parseExpr = parseExp' []
 
-parseExpr' :: [Char] -> Parser
-parseExpr' _ "" = ("", "")
-parseExpr' [] (',':xs) = ("", xs)
-parseExpr' (s:tack) (x:xs) | x == s = withMatch x $ parseExpr' tack xs
-parseExpr' stack (x:xs) = withMatch x $ case x of
-  '('  -> parseExpr' (')':stack) xs
-  '['  -> parseExpr' (']':stack) xs
-  '"'  -> parseLeaf (parseExpr' stack) '"'  xs
-  '\'' -> parseLeaf (parseExpr' stack) '\'' xs
-  _    -> parseExpr' stack xs
+parseExp' :: [Char] -> Parser
+parseExp' _ "" = ("", "")
+parseExp' [] (',':xs) = ("", xs)
+parseExp' (s:tack) (x:xs) | x == s = withMatch x $ parseExp' tack xs
+parseExp' stack (x:xs) = withMatch x $ case x of
+  '('  -> parseExp' (')':stack) xs
+  '['  -> parseExp' (']':stack) xs
+  '"'  -> parseLeaf (parseExp' stack) '"'  xs
+  '\'' -> parseLeaf (parseExp' stack) '\'' xs
+  _    -> parseExp' stack xs
 
 parseLeaf :: Parser -> Char -> Parser
 parseLeaf _ _ "\\" = ("\\", "")

@@ -83,9 +83,9 @@ spec = hspec $ do
         $> counterexample [d|show s, parseExpr s|]
       in prop
 
-  describe "parseExpr'" $ do
+  describe "parseExp'" $ do
     it "should work" $ do
-      let p = parseExpr'
+      let p = parseExp'
       p []     "asd" `shouldBe` ("asd", "")
       p []     "a,b" `shouldBe` ("a", "b")
       p ")"    "a,b" `shouldBe` ("a,b", "")
