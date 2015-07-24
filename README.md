@@ -27,6 +27,36 @@ into this expression
 )
 ```
 
-Have a look at the [list of features](FEATURES.md).
+# QuickCheck
+
+If you have any intermediate computation within a QuickCheck property, it can
+be useful to print a counterexample simply in case of failure
+
+```haskell
+{-# LANGUAGE QuasiQuotes #-}
+
+import Debug.Dump
+import Test.QuickCheck
+
+($>) = flip ($); infixl 0 $>
+
+prop :: Float -> Property
+prop n = n == 1 / (1 / n)
+  $> counterexample [d|n, 1/n, 1/(1/n)|]
+
+main = quickCheck prop
+```
+
+Which, when executed, will print something like this:
+
+```
+*** Failed! Falsifiable (after 15 tests and 133 shrinks):
+1.7051912e-38
+(n) = 1.7051912e-38   (1/n) = 5.864445e37   (1/(1/n)) = 1.7051913e-38
+```
+
+Isn't it nice to see the intermediate computations as well?
+
+See also: [list of features](FEATURES.md)
 
 *Concieved at [this StackOverflow question](http://stackoverflow.com/q/31349556/499478).*

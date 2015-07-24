@@ -49,5 +49,6 @@ n/a
 # Miscellaneous
 
 * Refactored and conceptually clean code
-* Some Haddock documentation, probably more to come
+* Some Haddock documentation. Perhaps more to come
 * Description in FEATURES.md
+* Readme contains examples for print and QuickCheck. Perhaps more to come.
