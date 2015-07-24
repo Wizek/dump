@@ -42,8 +42,8 @@ spec = hspec $ do
       p []     [q|'\'',c|] `shouldBe` ([q|'\''|], "c")
       p []     [q|(\),c|] `shouldBe` ([q|(\)|], "c")
 
-  -- describe "parseLeafUntil" $ do
-  --   let p = parseLeafUntil '"'
+  -- describe "parseLeaf" $ do
+  --   let p = parseLeaf '"'
   --   it "knows to stop on regular quote" $ do
   --     p [q|a"   |] `shouldBe` ([q|a"|], "   ")
 

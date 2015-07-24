@@ -49,11 +49,13 @@ parseExpr stack (x:xs) = withMatch x $ case x of
 parseLeaf :: Char -> String -> [Char] -> (String, String)
 parseLeaf _ "\\" _ = ("\\", "")
 parseLeaf _ ""   _ = ("",   "")
-parseLeaf cc (x:xs) stack
-  | x == cc   = withMatch x $ parseExpr stack xs
-  | x == '\\' = let (y:ys) = xs in
-    withMatch x $ withMatch y $ parseLeaf cc ys stack
-  | otherwise = withMatch x $ parseLeaf cc xs stack
+parseLeaf cc (x:xs) stack = withMatch x result
+  where
+  result
+    | x == cc   = parseExpr stack xs
+    | x == '\\' = withMatch y $ parseLeaf cc ys stack
+    | otherwise = parseLeaf cc xs stack
+  (y:ys) = xs
 
 withMatch :: a -> ([a], [b]) -> ([a], [b])
 withMatch x (m, r) = (x:m, r)
