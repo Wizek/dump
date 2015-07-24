@@ -47,10 +47,21 @@ splitOnCommas str = fff str
 putMatch :: a -> ([a], [b]) -> ([a], [b])
 putMatch x (m, r) = (x:m, r)
 
+fff :: String -> [Char] -> (String, String)
 fff "" _ = ("", "")
-fff (x:xs) stack = case (x, stack, head stack == x) of
-  (_, _:_, True) -> putMatch x $ fff xs (tail stack)
-  (',', [], _) -> ("", xs)
-  ('(', _, _) -> putMatch x $ fff xs (')':stack)
-  ('[', _, _) -> putMatch x $ fff xs (']':stack)
-  _   -> putMatch x $ fff xs stack
+fff (x:xs) stack = case (x:xs, stack, s == x, s `elem` "'\"") of
+  (',' :_, [], _, _) -> ("", xs)
+  ('\\':n:xs, _:_, _, True) ->  putMatch x $ putMatch n $ fff xs stack
+  ( _  :_, _:_, True, _) -> putMatch x $ fff xs tack
+  ('(' :_, _, _, _) -> putMatch x $ fff xs (append ')')
+  ('[' :_, _, _, _) -> putMatch x $ fff xs (append ']')
+  ('"' :_, _, _, _) -> putMatch x $ fff xs (append '"')
+  ('\'':_, _, _, _) -> putMatch x $ fff xs (append '\'')
+  _              -> putMatch x $ fff xs stack
+  where
+    (_:x2:x2s) = xs
+    (s:tack) = stack
+    append c = case stack of
+      ('"':_)   -> stack
+      ('\'':_)  -> stack
+      otherwise -> c:stack

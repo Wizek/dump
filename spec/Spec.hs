@@ -30,6 +30,16 @@ spec = hspec $ do
       fff "[a,b],c" [] `shouldBe` ("[a,b]", "c")
       fff "],b],c" "]]" `shouldBe` ("],b]", "c")
       fff "],b],c" "]]" `shouldBe` ("],b]", "c")
+      fff [q|a,b",c|] ['"'] `shouldBe` ([q|a,b"|], "c")
+      fff [q|"a,b",c|] [] `shouldBe` ([q|"a,b"|], "c")
+      fff [q|(a",c|] ['"'] `shouldBe` ([q|(a"|], "c")
+      fff [q|,',c|] ['\''] `shouldBe` ([q|,'|], "c")
+      fff [q|',',c|] [] `shouldBe` ([q|','|], "c")
+      fff [q|'"',c|] [] `shouldBe` ([q|'"'|], "c")
+      -- fff [q|'\',',|] [] `shouldBe` ([q|'\''|], "c")
+      -- fff [q|'\',',|] [] `shouldBe` ([q|'\''|], "c")
+      fff [q|'\'',c|] [] `shouldBe` ([q|'\''|], "c")
+      fff [q|(\),c|] [] `shouldBe` ([q|(\)|], "c")
 
   -- describe "parseLeafUntil" $ do
   --   let p = parseLeafUntil '"'
