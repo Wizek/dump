@@ -35,29 +35,25 @@ splitOnCommas "" = []
 -- parseLeaf = do
 --   noneOf ","
 
+parseExpr :: [Char] -> String -> (String, String)
+parseExpr _ "" = ("", "")
+parseExpr [] (',':xs) = ("", xs)
+parseExpr (s:tack) (x:xs) | x == s = withMatch x $ parseExpr tack xs
+parseExpr stack (x:xs) = withMatch x $ case x of
+  '('  -> parseExpr (')':stack) xs
+  '['  -> parseExpr (']':stack) xs
+  '"'  -> parseLeaf '"'  xs stack
+  '\'' -> parseLeaf '\'' xs stack
+  _    -> parseExpr stack xs
+
 parseLeaf :: Char -> String -> [Char] -> (String, String)
 parseLeaf _ "\\" _ = ("\\", "")
 parseLeaf _ ""   _ = ("",   "")
 parseLeaf cc (x:xs) stack
-  | x == cc   = withMatch x $ parseExpr xs stack
+  | x == cc   = withMatch x $ parseExpr stack xs
   | x == '\\' = let (y:ys) = xs in
     withMatch x $ withMatch y $ parseLeaf cc ys stack
   | otherwise = withMatch x $ parseLeaf cc xs stack
 
 withMatch :: a -> ([a], [b]) -> ([a], [b])
 withMatch x (m, r) = (x:m, r)
-
-parseExpr :: String -> [Char] -> (String, String)
-parseExpr "" _ = ("", "")
-parseExpr (',':xs) [] = ("", xs)
-parseExpr (x:xs) stack = withMatch x $ case pattern of
-  ( _  :_, _:_, True) -> parseExpr xs tack
-  ('(' :_, _, _) -> parseExpr xs (')':stack)
-  ('[' :_, _, _) -> parseExpr xs (']':stack)
-  ('"' :_, _, _) -> parseLeaf '"'  xs stack
-  ('\'':_, _, _) -> parseLeaf '\'' xs stack
-  _                 -> parseExpr xs stack
-  where
-    pattern = (x:xs, stack, s == x)
-    (_:x2:x2s) = xs
-    (s:tack) = stack
