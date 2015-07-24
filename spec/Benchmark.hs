@@ -1,12 +1,19 @@
 import Criterion.Main
 import Internal.Parser
 import Internal.Utils
+import Control.DeepSeq (deepseq)
+import Data.List
 
 main = defaultMain [
-  bgroup "parse" $ map (f.(*10000)) [0..4]
+    bgroup "referenceON2" $ map (referenceON2.(*2)) [0..4],
+    bgroup "parse" $ map (f.(*2)) [0..4]
   ]
   where
-    f n = bench (show n) $ nf splitOnCommas ((dup n "((a,b),(a,b)),") ++ " b")
+    referenceON2 n = bench (show n) $ xs `deepseq` nf (subsequences) xs
+      where xs = (dup n "a") ++ ""
+
+    f n = bench (show n) $ xs `deepseq` nf (splitOnCommas) xs
+      where xs = (dup n "a") ++ ""
 
 -- dup :: String -> String
 dup n s = concat $ replicate n s
