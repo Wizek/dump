@@ -1,20 +1,16 @@
-{-# LANGUAGE QuasiQuotes #-}
-
 import Test.Hspec
-
-import Debug.Dump
 import Test.QuickCheck
+
 import Text.InterpolatedString.Perl6
 import Data.List (isPrefixOf)
 
+import Debug.Dump
 import Internal.Parser
 import Internal.Utils
 
 main = spec
 
 spec = hspec $ do
-
-
   describe "wrapInParens" $ do
     it "should work" $ do
       wrapInParens "a" `shouldBe` "(a)"
