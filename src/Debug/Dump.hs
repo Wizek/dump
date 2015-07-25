@@ -46,15 +46,18 @@ into this expression
 
 module Debug.Dump (d, dd, dump) where
 
+import Data.List
+import Data.Traversable
+import Control.Applicative
+import Language.Haskell.TH
+import Language.Haskell.TH.Quote
+
+import Language.Haskell.Meta.Parse
+import Text.InterpolatedString.Perl6
+
 import Internal.Utils (($>), (.>))
 import qualified Internal.Utils as Utils
 import qualified Internal.Parser as Parser
-import Data.List
-import Debug.Trace
-import Language.Haskell.TH
-import Language.Haskell.TH.Quote
-import Language.Haskell.Meta.Parse
-import Text.InterpolatedString.Perl6
 
 -- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
