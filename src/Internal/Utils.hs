@@ -15,3 +15,5 @@ wrapInParens = wrapIn "(" ")"
 
 wrapIn :: String -> String -> String -> String
 wrapIn a c b = a ++ b ++ c
+
+-- do samples <- sample' (arbitrary :: Gen Exp); map (pprint .> putStrLn) samples $> intersperse (putStrLn $ replicate 60 '_') $> sequence_

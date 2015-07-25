@@ -9,6 +9,10 @@ import Internal.Parser
 import Internal.Utils
 
 main = spec
+main = do
+  samples <- sample' (arbitrary :: Gen Exp)
+  print samples
+  -- map (pprint .> putStrLn) samples $> intersperse (putStrLn $ replicate 60 '_') $> sequence_
 
 spec = hspec $ do
   describe "wrapInParens" $ do

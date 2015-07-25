@@ -47,6 +47,7 @@ test-suite spec
                     , haskell-src-meta
                     , interpolatedstring-perl6 == 1.0.*
                     , text
+                    , text-show-instances == 2.0.1
 
                     , hspec
                     , QuickCheck
