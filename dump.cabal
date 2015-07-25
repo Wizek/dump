@@ -29,10 +29,10 @@ library
   exposed-modules:    Debug.Dump
   other-modules:      Internal.Utils, Internal.Parser
   build-depends:      base >=4 && <5
-                    , template-haskell
-                    , haskell-src-meta
-                    , interpolatedstring-perl6 == 1.0.*
-                    , text
+                    , template-haskell -any
+                    , haskell-src-meta >=0.6.0.9
+                    , interpolatedstring-perl6 >=0.8
+                    , text >=1.2.0.2
   ghc-options:
     --ddump-splices
     --funbox-strict-fields
@@ -43,13 +43,13 @@ library
 test-suite spec
   type:               exitcode-stdio-1.0
   build-depends:      base >=4 && <5
-                    , template-haskell
-                    , haskell-src-meta
-                    , interpolatedstring-perl6 == 1.0.*
-                    , text
+                    , template-haskell -any
+                    , haskell-src-meta >=0.6.0.9
+                    , interpolatedstring-perl6 >=0.8
+                    , text >=1.2.0.2
 
-                    , hspec
-                    , QuickCheck
+                    , hspec >=0.2.0
+                    , QuickCheck >=1.0
   ghc-options:
     --ddump-splices
   hs-source-dirs:     spec, src
