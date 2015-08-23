@@ -21,9 +21,9 @@ by turnint this String
 into this expression
 
 ```haskell
-( "(a) = " ++ show (a)            ++ "\t  " ++
-  "(a+1) = " ++ show (a + 1)      ++ "\t  " ++
-  "(map (+a) [1..3]) = " ++ show (map (+ a) [1 .. 3])
+( "(a) = "                ++ show (a)                   ++ "\t  " ++
+  "(a+1) = "              ++ show (a + 1)               ++ "\t  " ++
+  "(map (+a) [1..3]) = "  ++ show (map (+ a) [1 .. 3])
 )
 ```
 
