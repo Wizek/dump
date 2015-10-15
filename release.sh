@@ -8,9 +8,21 @@ user="$2"
 pass="$3"
 ret=0
 
+
+
 log () {
   echo "# "$@
 }
+
+projectName=`ls *.cabal | sed s/.cabal//`
+
+if [ -e "$projectName.cabal" ]; then
+  log "Project Name: $projectName"
+else
+  log "*.cabal file not found, refusing release"
+  exit 1
+fi
+
 
 if [ -z "$ver" ]; then
   log "Version not given, refusing release"
@@ -48,11 +60,19 @@ if [ "$ret" -ne 0 ]; then
 fi
 
 rx="(version:\s+)([0-9\w.-]+)"
-oldver=`cat dump.cabal | grep "^version:" | sed -re "s/$rx/\2/"`
+oldver=`cat "$projectName.cabal" | grep "^version:" | sed -re "s/$rx/\2/"`
+
+cabal configure
+cabal install --enable-test
+cabal test
+
+cabal sdist
+cabal upload "dist/$projectName-$ver.tar.gz" --username "$user" --password "$pass"
+neil docs --username "$user:$pass"
 
 if [ "$ver" != "$oldver" ]; then
   msg="Bumping version v$oldver -> v$ver"
-  sed -r -i -e "s/$rx/\1$ver/" dump.cabal
+  sed -r -i -e "s/$rx/\1$ver/" "$projectName.cabal"
   git add -u
   git commit -m "$msg"
   log "$msg"
@@ -67,7 +87,3 @@ if [ ! `git tag -l "v$ver"` ]; then
 fi
 
 git push --tags
-
-cabal sdist
-cabal upload "dist/dump-$ver.tar.gz" --username "$user" --password "$pass"
-neil docs --username "$user:$pass"
