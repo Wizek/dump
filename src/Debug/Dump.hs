@@ -36,8 +36,8 @@ by turnint this String
 into this expression
 
 @
-( "(a) = " ++ show (a)            ++ "\t  " ++
-  "(a+1) = " ++ show (a + 1)      ++ "\t  " ++
+( "(a) = "               ++ show (a)                   ++ "\t  " ++
+  "(a+1) = "             ++ show (a + 1)               ++ "\t  " ++
   "(map (+a) [1..3]) = " ++ show (map (+ a) [1 .. 3])
 )
 @
@@ -64,13 +64,16 @@ dump :: QuasiQuoter
 dump = QuasiQuoter {quoteExp = process}
 
 -- | Shorthand for `dump`.
+d :: QuasiQuoter
 d = dump
 
 -- | Shorthand for `dump`.
+dd :: QuasiQuoter
 dd = dump
 
 
 newtype HsExp a = HsExp a deriving (Functor)
+unHsExp :: HsExp a -> a
 unHsExp (HsExp s) = s
 
 instance Applicative HsExp where

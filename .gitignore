@@ -20,3 +20,5 @@ cabal.sandbox.config
 
 /report.*
 /.stack-work/
+/.idea/
+/codex.tags
