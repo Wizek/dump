@@ -48,9 +48,13 @@ spec = hspec $ do
       p "','" `shouldBe` "','"
       p "',', a" `shouldBe` "','"
 
-    it "handles string literals" $ do
+    it "p handles string literals" $ do
       p [q|","|] `shouldBe` [q|","|]
       p [q|",", a|] `shouldBe` [q|","|]
+
+    it "d handles string literals" $ do
+      [d|'c'|] `shouldBe` [q|('c') = 'c'|]
+      [d|"hi"|] `shouldBe` [q|("hi") = "hi"|]
 
     it "handles list literals" $ do
       p "[a,b]" `shouldBe` "[a,b]"

@@ -47,6 +47,7 @@ into this expression
 module Debug.Dump (d, dd, dump) where
 
 import Data.List
+import Data.List.Utils
 import Data.Traversable
 import Control.Applicative
 import Language.Haskell.TH
@@ -93,7 +94,9 @@ splitOnCommas :: String -> [HsExp String]
 splitOnCommas = Parser.splitOnCommas .> map HsExp
 
 nameAndValue :: HsExp String -> HsExp String
-nameAndValue = fmap $ \str-> [qq|"({Utils.strip str}) = " ++ show ($str)|]
+nameAndValue = fmap $ \str-> [qq|"({f str}) = " ++ show ($str)|]
+  where
+  f str = replace "\"" "\\\"" $ Utils.strip str
 
 joinAsColumns :: [HsExp String] -> HsExp String
 joinAsColumns = sequenceA .> fmap (intercalate [q| ++ "\t  " ++ |])
@@ -103,5 +106,4 @@ wrapInParens = fmap Utils.wrapInParens
 
 parseHsStrToQQExp :: HsExp String -> Exp
 parseHsStrToQQExp = unHsExp .> parseExp .> either error id
-
 
