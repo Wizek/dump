@@ -50,6 +50,8 @@ if [ "$ret" -ne 0 ]; then
   git status --short
   log "There are uncommitted changes, refusing release"
   exit 2
+else
+  log "No uncommitted changes. Wonderful. Continuing."
 fi
 
 git diff --cached --exit-code >/dev/null || ret=$?
@@ -57,27 +59,34 @@ if [ "$ret" -ne 0 ]; then
   git status --short
   log "There are uncommitted staged changes, refusing release"
   exit 3
+else
+  log "No uncommitted staged changes either. Wonderful. Continuing."
 fi
 
 rx="(version:\s+)([0-9\w.-]+)"
 oldver=`cat "$projectName.cabal" | grep "^version:" | sed -re "s/$rx/\2/"`
 
+log "\$oldver: $oldver"
+
+
 cabal configure
 cabal install --enable-test
 cabal test
+
+msg="Bumping version v$oldver -> v$ver"
+if [ "$ver" != "$oldver" ]; then
+  sed -r -i -e "s/$rx/\1$ver/" "$projectName.cabal"
+  log "$msg"
+fi
 
 cabal sdist
 cabal upload "dist/$projectName-$ver.tar.gz" --username "$user" --password "$pass"
 neil docs --username "$user:$pass"
 
 if [ "$ver" != "$oldver" ]; then
-  msg="Bumping version v$oldver -> v$ver"
-  sed -r -i -e "s/$rx/\1$ver/" "$projectName.cabal"
   git add -u
   git commit -m "$msg"
-  log "$msg"
-else
-  log "Releasing $ver"
+  log "Committed: $msg"
 fi
 
 git push
