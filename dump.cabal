@@ -2,7 +2,7 @@
 -- see http://haskell.org/cabal/users-guide/
 
 name:               dump
-version:            0.2.8
+version:            0.2.9
 
 synopsis:           Dumps the names and values of expressions to ease debugging.
 
@@ -33,6 +33,7 @@ library
                     , haskell-src-meta >=0.6.0.9
                     , interpolatedstring-perl6 >=0.8
                     , text >=1.2.0.2
+                    , MissingH
   ghc-options:
     --ddump-splices
     --funbox-strict-fields
@@ -47,6 +48,7 @@ test-suite spec
                     , haskell-src-meta >=0.6.0.9
                     , interpolatedstring-perl6 >=0.8
                     , text >=1.2.0.2
+                    , MissingH
 
                     , hspec >=0.2.0
                     , QuickCheck >=1.0
