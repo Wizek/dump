@@ -15,6 +15,7 @@ For example usage, see README.md, e.g. on
 module Debug.Dump (d, dd, dump) where
 
 import Data.List
+import Debug.Trace
 import Data.List.Utils
 import Data.Traversable
 import Control.Applicative
@@ -41,7 +42,7 @@ dd :: QuasiQuoter
 dd = dump
 
 
-newtype HsExp a = HsExp a deriving (Functor)
+newtype HsExp a = HsExp a deriving (Functor, Show, Eq)
 unHsExp :: HsExp a -> a
 unHsExp (HsExp s) = s
 
@@ -51,12 +52,21 @@ instance Applicative HsExp where
 
 process :: String -> Q Exp
 process = id
+  .> \str -> str $> id
+  .> removeLineComments
   .> splitOnCommas
+  .> filter (fmap Utils.strip .> (/= HsExp ""))
   .> map nameAndValue
+  -- .> \x -> traceShow (x,111111111111) x $> id
   .> joinAsColumns
   .> wrapInParens
-  .> parseHsStrToQQExp
+  .> parseHsStrToQQExp str
   .> return
+
+removeLineComments = id
+  .> lines
+  .> filter (Utils.strip .> ("-- " `isPrefixOf`) .> not)
+  .> unlines
 
 splitOnCommas :: String -> [HsExp String]
 splitOnCommas = Parser.splitOnCommas .> map HsExp
@@ -64,14 +74,39 @@ splitOnCommas = Parser.splitOnCommas .> map HsExp
 nameAndValue :: HsExp String -> HsExp String
 nameAndValue = fmap $ \str-> [qq|"({f str}) = " ++ show ($str)|]
   where
-  f str = replace "\"" "\\\"" $ Utils.strip str
+  f = id
+    .> Utils.strip
+    .> replace "\"" "\\\""
+    .> replace "\n" "\\n\"\n  ++ \""
 
 joinAsColumns :: [HsExp String] -> HsExp String
-joinAsColumns = sequenceA .> fmap (intercalate [q| ++ "\t  " ++ |])
+joinAsColumns = sequenceA .> fmap (intercalate [qc|{nl}{nl}{nl}  ++ "\t  " ++ |])
 
 wrapInParens :: HsExp String -> HsExp String
 wrapInParens = fmap Utils.wrapInParens
 
-parseHsStrToQQExp :: HsExp String -> Exp
-parseHsStrToQQExp = unHsExp .> parseExp .> either error id
+parseHsStrToQQExp :: String -> HsExp String -> Exp
+parseHsStrToQQExp original = id
+  .> unHsExp
+  .> \s -> s $> id
+  .> parseExp
+  .> let e =
+          [qc|parseHsStrToQQExp:{indent 2 original}{indent 10 s}){nl}{nl}|] in id
+  .> let ef = (e ++) .> error in id
+  .> either ef id
 
+nl = "\n"
+
+data CShow a = CShow (a -> String) a
+instance Show (CShow a) where
+  show (CShow f a) = f a
+
+indent n str =
+  str
+  $> lines
+  $> map (replicate n ' ' ++)
+  $> unlines
+
+-- asd =
+--   "aaa \
+--   bbb"

@@ -26,7 +26,7 @@ spec = do
       wrapInParens "" `shouldBe` "()"
 
   describe "parseLeaf" $ do
-    let p = parseLeaf (\xs->("",xs)) '"'
+    let p = parseLeaf (\xs->("",xs)) "\""
     it "knows to stop on regular quote" $ do
       p [q|a"   |] `shouldBe` ([q|a"|], "   ")
 
@@ -65,6 +65,69 @@ spec = do
       [d|'c'|] `shouldBe` [q|('c') = 'c'|]
       [d|"hi"|] `shouldBe` [q|("hi") = "hi"|]
 
+    it "d handles multi line" $ do
+      [d| 1 |] `shouldBe` [q|(1) = 1|]
+      [d| 1, 2 |] `shouldBe` "(1) = 1\t  (2) = 2"
+      [d|
+        1,
+        2
+      |] `shouldBe` "(1) = 1\t  (2) = 2"
+      [d|
+        1,
+        2,
+      |] `shouldBe` "(1) = 1\t  (2) = 2"
+      [d|
+        , 1
+        , 2
+      |] `shouldBe` "(1) = 1\t  (2) = 2"
+      [d|
+        , subtract
+            3 7
+        , 2
+      |] `shouldBe` "(subtract\n            3 7) = 4\t  (2) = 2"
+
+    it "d handles comments" $ do
+      [d|
+        , 1
+        , 2
+        , 3
+      |] `shouldBe` "(1) = 1\t  (2) = 2\t  (3) = 3"
+      [d|
+        -- , 1
+        , 2
+        , 3
+      |] `shouldBe` "(2) = 2\t  (3) = 3"
+      [d|
+        , 1
+        -- , 2
+        , 3
+      |] `shouldBe` "(1) = 1\t  (3) = 3"
+      [d|
+        , 1
+        , 2 -- test
+        , 3
+      |] `shouldBe` "(1) = 1\t  (2 -- test) = 2\t  (3) = 3"
+      [d|
+        , 1
+        , 2
+        -- , 3
+      |] `shouldBe` "(1) = 1\t  (2) = 2"
+
+
+      [d|
+        , 1 {- test -}
+        , {- 2 -}
+        , 3
+      |] `shouldBe` "(1 {- test -}) = 1\t  ({- 2 -}) = ()\t  (3) = 3"
+      [d|
+        , 1 {- test -}
+        , {- 2 -}
+        {- , 3 -}
+      |] `shouldBe` "(1 {- test -}) = 1\t  ({- 2 -}\n        {- , 3 -}) = ()"
+
+      -- [d| a{b="},"} |] `shouldBe` [q|"hello"|]
+      -- [d| "hello" |] `shouldBe` [q|"hello"|]
+
     it "handles list literals" $ do
       p "[a,b]" `shouldBe` "[a,b]"
 
@@ -95,20 +158,24 @@ spec = do
   describe "parseExp'" $ do
     it "should work" $ do
       let p = parseExp'
-      p []     "asd" `shouldBe` ("asd", "")
-      p []     "a,b" `shouldBe` ("a", "b")
-      p ")"    "a,b" `shouldBe` ("a,b", "")
-      p []     "(a,b)" `shouldBe` ("(a,b)", "")
-      p []     "(a,b),c" `shouldBe` ("(a,b)", "c")
-      p []     "[a,b],c" `shouldBe` ("[a,b]", "c")
-      p "]]"   "],b],c" `shouldBe` ("],b]", "c")
-      p []     [q|"a,b",c|] `shouldBe` ([q|"a,b"|], "c")
-      p []     [q|',',c|] `shouldBe` ([q|','|], "c")
-      p []     [q|'"',c|] `shouldBe` ([q|'"'|], "c")
-      -- p []     [q|'\',',|] `shouldBe` ([q|'\','|], "c")
-      p []     [q|"\",",c|] `shouldBe` ([q|"\","|], "c")
-      p []     [q|'\'',c|] `shouldBe` ([q|'\''|], "c")
-      p []     [q|(\),c|] `shouldBe` ([q|(\)|], "c")
+      p []        "asd" `shouldBe` ("asd", "")
+      p []        "a,b" `shouldBe` ("a", "b")
+      p [")"]     "a,b" `shouldBe` ("a,b", "")
+      p []        "(a,b)" `shouldBe` ("(a,b)", "")
+      p []        "(a,b),c" `shouldBe` ("(a,b)", "c")
+      p []        "[a,b],c" `shouldBe` ("[a,b]", "c")
+      p ["]","]"] "],b],c" `shouldBe` ("],b]", "c")
+      p []        [q|"a,b",c|] `shouldBe` ([q|"a,b"|], "c")
+      p []        [q|',',c|] `shouldBe` ([q|','|], "c")
+      p []        [q|'"',c|] `shouldBe` ([q|'"'|], "c")
+      -- p []        [q|'\',',|] `shouldBe` ([q|'\','|], "c")
+      p []        [q|"\",",c|] `shouldBe` ([q|"\","|], "c")
+      p []        [q|'\'',c|] `shouldBe` ([q|'\''|], "c")
+      p []        [q|(\),c|] `shouldBe` ([q|(\)|], "c")
+
+      -- p []        [q|a{b="},"}|] `shouldBe` ([q|a{b="},"}|], "")
+      -- p []        [q|a{b=1,}|] `shouldBe` ([q|a{b=1,}|], "")
+      p []        [q|{- ,}, -}|] `shouldBe` ([q|{- ,}, -}|], "")
 
     -- TODO decide
     -- it "should? handle quotes int its own stack" $ do
