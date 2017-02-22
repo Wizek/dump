@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -ddump-splices #-}
+{-# OPTIONS_GHC -ddump-to-file #-}
+
 import Test.Hspec
 import Test.QuickCheck
 
@@ -8,9 +11,15 @@ import Debug.Dump
 import Internal.Parser
 import Internal.Utils
 
-main = spec
+import qualified  Test.Hspec.Runner                     as Hspec
 
-spec = hspec $ do
+
+mainColor = Hspec.hspecWith
+  Hspec.defaultConfig{Hspec.configColorMode=Hspec.ColorAlways} spec
+
+main = hspec spec
+
+spec = do
   describe "wrapInParens" $ do
     it "should work" $ do
       wrapInParens "a" `shouldBe` "(a)"
