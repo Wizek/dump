@@ -3,44 +3,12 @@
 
 {-|
 
-`d`, `dd`, and `dump` are aliases of the same `QuasiQuoter`. you can choose to
-imort just one of them:
+`d`, `dd`, and `dump` are aliases of the same `QuasiQuoter`. You can choose to
+import just one of them if you want:
 
-@
-import Debug.Dump (dd)
-@
-
-Example usage:
-
-@
-{&#45;\# LANGUAGE QuasiQuotes \#&#45;}
-
-import Debug.Dump
-
-main = print [d|a, a+1, map (+a) [1..3]|]
-  where a = 2
-@
-
-which prints:
-
-@
-(a) = 2   (a+1) = 3       (map (+a) [1..3]) = [3,4,5]
-@
-
-by turnint this String
-
-@
-"a, a+1, map (+a) [1..3]"
-@
-
-into this expression
-
-@
-( "(a) = "               ++ show (a)                   ++ "\t  " ++
-  "(a+1) = "             ++ show (a + 1)               ++ "\t  " ++
-  "(map (+a) [1..3]) = " ++ show (map (+ a) [1 .. 3])
-)
-@
+For example usage, see README.md, e.g. on
+[GitHub](https://github.com/Wizek/dump#readme) or on
+[Hackage](http://hackage.haskell.org/package/dump#readme):
 
 -}
 
