@@ -59,7 +59,7 @@ process = id
   .> map nameAndValue
   -- .> \x -> traceShow (x,111111111111) x $> id
   .> joinAsColumns
-  .> wrapInParens
+  .> (fmap (++ "\n")) .> wrapInParens
   .> parseHsStrToQQExp str
   .> return
 
@@ -72,15 +72,20 @@ splitOnCommas :: String -> [HsExp String]
 splitOnCommas = Parser.splitOnCommas .> map HsExp
 
 nameAndValue :: HsExp String -> HsExp String
-nameAndValue = fmap $ \str-> [qq|"({f str}) = " ++ show ($str)|]
+nameAndValue = fmap $ \str -> case parseExp str of
+  Right (LitE (StringL a)) -> str
+  Left e | trace [qc|Debug.Dump: Trouble parsing `{str}`: {e}|] False -> undefined
+  _                 -> [qq|"({f str}) = " ++ show ({f2 str})|]
   where
+  f2 = Utils.strip
+    -- ?????
   f = id
     .> Utils.strip
     .> replace "\"" "\\\""
     .> replace "\n" "\\n\"\n  ++ \""
 
 joinAsColumns :: [HsExp String] -> HsExp String
-joinAsColumns = sequenceA .> fmap (intercalate [qc|{nl}{nl}{nl}  ++ "\t  " ++ |])
+joinAsColumns = sequenceA .> fmap (intercalate [qc|{nl}  ++ "\t  " ++ |])
 
 wrapInParens :: HsExp String -> HsExp String
 wrapInParens = fmap Utils.wrapInParens
@@ -91,7 +96,7 @@ parseHsStrToQQExp original = id
   .> \s -> s $> id
   .> parseExp
   .> let e =
-          [qc|parseHsStrToQQExp:{indent 2 original}{indent 10 s}){nl}{nl}|] in id
+          [qc|Debug.Dump: parseHsStrToQQExp:{indent 2 original}{indent 10 s})|] in id
   .> let ef = (e ++) .> error in id
   .> either ef id
 

@@ -63,7 +63,7 @@ spec = do
 
     it "d handles string literals" $ do
       [d|'c'|] `shouldBe` [q|('c') = 'c'|]
-      [d|"hi"|] `shouldBe` [q|("hi") = "hi"|]
+      -- [d|"hi"|] `shouldBe` [q|("hi") = "hi"|]
 
     it "d handles multi line" $ do
       [d| 1 |] `shouldBe` [q|(1) = 1|]
@@ -124,9 +124,20 @@ spec = do
         , {- 2 -}
         {- , 3 -}
       |] `shouldBe` "(1 {- test -}) = 1\t  ({- 2 -}\n        {- , 3 -}) = ()"
+        -- TODO consider if we want \n inside the expression or strip it
 
       -- [d| a{b="},"} |] `shouldBe` [q|"hello"|]
-      -- [d| "hello" |] `shouldBe` [q|"hello"|]
+    it "d displays literals only once" $ do
+      -- [d| 1 |] `shouldBe` [q|1|]
+      -- [d| Just |] `shouldBe` [q|1|]
+      [d| "hello" |] `shouldBe` [q|hello|]
+      -- [d| \ |] `shouldBe` [q|hello|]
+      let a = 1
+      [d|
+        , a
+        , "hello"
+        , a + 1
+      |] `shouldBe` "(a) = 1\t  hello\t  (a + 1) = 2"
 
     it "handles list literals" $ do
       p "[a,b]" `shouldBe` "[a,b]"
@@ -222,3 +233,5 @@ spec = do
 
     it "should step over commas in sub-expressions" $ do
       [d|(1, 2), 1|] `shouldBe` "((1, 2)) = (1,2)\t  (1) = 1"
+
+  -- it "should support string literals" $ do
