@@ -31,7 +31,14 @@ import qualified Internal.Parser as Parser
 
 -- | This is the main `QuasiQuoter`.
 dump :: QuasiQuoter
-dump = QuasiQuoter {quoteExp = process}
+dump = QuasiQuoter
+  { quoteExp = process
+  , quoteType = \_ -> fl "use in types."
+  , quotePat = \_ -> fl "use in patterns."
+  , quoteDec = \_ -> fl "generating declarations."
+  }
+  where
+    fl m = fail $ "This quasiquoter is not for " ++ m
 
 -- | Shorthand for `dump`.
 d :: QuasiQuoter
@@ -61,7 +68,6 @@ process = id
   .> joinAsColumns
   .> (fmap (++ "\n")) .> wrapInParens
   .> parseHsStrToQQExp str
-  .> return
 
 removeLineComments = id
   .> lines
@@ -90,15 +96,15 @@ joinAsColumns = sequenceA .> fmap (intercalate [qc|{nl}  ++ "\t  " ++ |])
 wrapInParens :: HsExp String -> HsExp String
 wrapInParens = fmap Utils.wrapInParens
 
-parseHsStrToQQExp :: String -> HsExp String -> Exp
+parseHsStrToQQExp :: String -> HsExp String -> Q Exp
 parseHsStrToQQExp original = id
   .> unHsExp
   .> \s -> s $> id
   .> parseExp
   .> let e =
           [qc|Debug.Dump: parseHsStrToQQExp:{indent 2 original}{indent 10 s})|] in id
-  .> let ef = (e ++) .> error in id
-  .> either ef id
+  .> let ef = (e ++) .> fail in id
+  .> either ef pure
 
 nl = "\n"
 
